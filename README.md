@@ -1,8 +1,13 @@
 # 英语分级阅读（web 端 M0）
 
+[![CI](https://github.com/jokerpast-bool/the-best-english-learning-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/jokerpast-bool/the-best-english-learning-assistant/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 按词汇量分级（四级 / 六级）推荐公版英文书，**每一章先练后读**：把这一章里"你不认识"的词、短语、长难句挑出来练，达标后再读原文，读完回流到复习队列。
 
 当前是可运行的纵向切片（M0），不是完整产品。
+
+> 仓库里只有代码（约 350 KB）：书籍原文、Gutenberg 目录、管线产物和 SQLite 库都在 `.gitignore` 里，首次运行按「快速开始」跑一遍管线即可重建。
 
 ## 快速开始
 
