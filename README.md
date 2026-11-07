@@ -1,6 +1,8 @@
-# 英语分级阅读（web 端 M0）
+# Storyrung
 
-[![CI](https://github.com/jokerpast-bool/the-best-english-learning-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/jokerpast-bool/the-best-english-learning-assistant/actions/workflows/ci.yml)
+英语分级阅读（web 端 M0）
+
+[![CI](https://github.com/jokerpast-bool/storyrung/actions/workflows/ci.yml/badge.svg)](https://github.com/jokerpast-bool/storyrung/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 按词汇量分级（四级 / 六级）推荐公版英文书，**每一章先练后读**：把这一章里"你不认识"的词、短语、长难句挑出来练，达标后再读原文，读完回流到复习队列。
@@ -100,6 +102,17 @@ node content-pipeline/build.mjs                        # 回到默认校准模�
 - **暗色模式**：CSS 变量覆盖 + `data-theme`，首屏内联脚本防闪烁；
 - **动效**：只在 hover/切页做 150~250ms 过渡，不引动画库（避免首屏体积）。
 
+## AI 书封与插图（Agnes）
+
+书封和章节插图由 Agnes Image 2.5 Flash 生成，key 从本地文件读（默认 `~/.dsh/secrets/agnes.key`），不进代码也不入库：
+
+```bash
+npm run images -- --covers           # 可读书目的书封
+npm run images -- --chapter <slug> 1 # 单章插图
+```
+
+生成结果落在 `apps/web/public/generated/`（已 gitignore）；没有图的书写封自动退回渐变色块。详见 [docs/AGNES.md](docs/AGNES.md)。
+
 ## 内容数据现状（实测）
 
 候选 59 本 → 目录命中 57 本 → 过闸 12 本（3 推荐 + 9 挑战），其余 45 本进「需改写」队列：
@@ -124,8 +137,10 @@ apps/web/               Next.js 15 应用
   components/           PrepTrainer / Reader / ReviewTrainer / LevelTest / BookCover / ThemeToggle
   lib/domain/           纯函数：等级估计、覆盖率与准入、预习掌握度、SRS
   lib/services/         数据访问与业务编排（library / chapter / prep-session / review / level-test / user）
+  lib/agnes.ts          Agnes 出图客户端（key 从 ~/.dsh/secrets/agnes.key 读）
+  app/api/images/       按需生成书封 / 章节插图
   prisma/               schema.sqlite + seed.ts
-  scripts/              smoke.ts · level-smoke.ts · reset-demo.ts
+  scripts/              smoke.ts · level-smoke.ts · reset-demo.ts · generate-images.ts
 content-pipeline/       Node 内容管线
   candidates.json       候选书名（加书改这里）
   select.mjs            书名 → Gutenberg ID（目录匹配）

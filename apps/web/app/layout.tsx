@@ -8,7 +8,7 @@ import "./globals.css";
 import "./theme.css";
 
 export const metadata: Metadata = {
-  title: "分级阅读 · English Reading",
+  title: "Storyrung · 分级英文原著阅读",
   description: "按词汇量分级、先练后读的英文原著阅读训练",
 };
 
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="shell">
           <nav className="nav">
             <Link href="/" className="brand">
-              分级<span>阅读</span>
+              story<span>rung</span>
             </Link>
             <div className="nav-links">
               <Link href="/library">
