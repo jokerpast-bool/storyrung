@@ -123,6 +123,16 @@ body {
   letter-spacing: -0.02em;
 }
 
+.hero-wordmark {
+  margin: 0 0 24px;
+  font-family: var(--serif);
+  font-weight: 600;
+}
+
+.hero-wordmark span {
+  color: var(--accent);
+}
+
 .hero-books {
   display: flex;
   gap: 10px;

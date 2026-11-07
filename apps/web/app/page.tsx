@@ -25,6 +25,9 @@ export default async function HomePage() {
   return (
     <main>
       <section className="hero-panel">
+        <h1 className="hero-wordmark">
+          story<span>rung</span>
+        </h1>
         <div className="row">
           {hasLevel ? (
             <>
