@@ -46,8 +46,8 @@ public/generated/chapters/<slug>/<n>.png    章节插图，1K / 16:9 → 1312×7
 命令（在 `apps/web` 下）：
 
 ```bash
-npm run images -- --covers               # 推荐 + 挑战区 12 本的书封
-npm run images -- --covers --all         # 连 45 本「需改写」也生成
+npm run images -- --covers               # 推荐 + 挑战区 27 本的书封
+npm run images -- --covers --all         # 连 82 本「需改写」也生成
 npm run images -- --book the-wonderful-wizard-of-oz --limit 3
 npm run images -- --chapter the-wonderful-wizard-of-oz 1
 npm run images -- --covers --force       # 覆盖已有图
@@ -100,7 +100,7 @@ curl -X POST http://127.0.0.1:3100/api/images \
 
 - 图像生成目前是促销价 **$0 / 张**（标准价 $0.003/张）。
 - 免费账号按 RPM 限流：1K 约 30 次/分（实际限速 20），2K 更低；3K/4K 只有 1–2 次/分。
-- 脚本默认每张间隔 2.6s，单张 5~15 秒。57 张书封约 5 分钟。
+- 脚本默认每张间隔 2.6s，单张 5~15 秒。109 张书封约 8 分钟。
 - 429 会自动指数退避重试（2s→4s→8s）。
 
 ## 5. 排错

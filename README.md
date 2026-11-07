@@ -35,7 +35,7 @@ node content-pipeline/select.mjs   # 候选书名 → 从 Gutenberg 目录解析
 node content-pipeline/build.mjs    # 下载正文 → 分章分句 → 词表标注 → 准入闸 → JSON
 ```
 
-书单在 `content-pipeline/candidates.json`（59 个候选书名），解析结果写 `content-pipeline/books.json`。
+书单在 `content-pipeline/candidates.json`（109 个候选书名），解析结果写 `content-pipeline/books.json`。
 加书只需要往 candidates 里加一行书名 + 作者，不用记 Gutenberg ID。
 
 自检（验证"预习答题 → 掌握度 → 通关 → 复习队列"链路）：
@@ -115,15 +115,15 @@ npm run images -- --chapter <slug> 1 # 单章插图
 
 ## 内容数据现状（实测）
 
-候选 59 本 → 目录命中 57 本 → 过闸 12 本（3 推荐 + 9 挑战），其余 45 本进「需改写」队列：
+候选 109 本 → 目录命中 109 本 → 可读 27 本（6 推荐 + 21 挑战），其余 82 本进「需改写」队列：
 
 | 分层 | 数量 | 代表 | 四级基准覆盖率 |
 |---|---|---|---|
-| 推荐 | 3 | The Wonderful Wizard of Oz 95.0%、Alice's Adventures in Wonderland 94.5%、The Adventures of Pinocchio 94.4% | ≥ 94% |
-| 挑战 | 9 | Memoirs of Sherlock Holmes 94.7%、Dracula 94.3%、Through the Looking-Glass 94.0%、Emma 93.3% | 92.5%~94% |
-| 需改写 | 45 | Pride and Prejudice 92.1%、Jane Eyre 89.5%、Moby-Dick 85.7% | < 92.5% |
+| 推荐 | 6 | The Wonderful Wizard of Oz 95.0%、Alice's Adventures in Wonderland 94.5%、The Adventures of Jerry Muskrat 94.8%、The Adventures of Pinocchio 94.4%、Danny Meadow Mouse 94.1%、Old Mother West Wind 94.0% | ≥ 94% |
+| 挑战 | 21 | Memoirs of Sherlock Holmes 93.4%、Black Beauty 93.5%、The Story of Doctor Dolittle 94.0%、Heidi 94.0%、The Story of the Amulet 92.8% | 92.5%~94% |
+| 需改写 | 82 | Pride and Prejudice 92.1%、Jane Eyre 89.5%、Moby-Dick 85.7% | < 92.5% |
 
-**这组数字本身就是结论**：未改写的公版经典对 4500 词读者普遍落在 85%~95%，只有极少数儿童文学越过 94%。所以书库不是"只有两本"，而是"能直接读的只有三本"——其余 9 本要靠预习兜着读，45 本得先改写。
+**这组数字本身就是结论**：未改写的公版经典对 4500 词读者普遍落在 85%~95%，只有极少数儿童文学越过 94%。所以书库不是"只有两本"，而是"能直接读的只有六本"——其余 21 本要靠预习兜着读，82 本得先改写。
 
 ## 项目结构
 
@@ -161,7 +161,7 @@ docs/ARCHITECTURE.md    架构设计
 | 单元测试 | 26/26 通过（等级估计 / 覆盖率与准入 / 预习掌握度 / SRS 排期） |
 | 测评自检 | 24 题四选一：全对 → 8000 词（cet6），全错 → 500 词（cet4）；猜对率已扣除 |
 | 链路自检 | 1 词先错后对 + 11 词答对 → prepScore 0.71、unlocked=true、prepStatus=passed、入队 1 张卡；评分 good 后排期 3 天、reps 0→1 |
-| 严格模式 | `GATE_PROFILE=strict` → 3 本书 0 本通过（97%/0.5 硬指标生效） |
+| 严格模式 | `GATE_PROFILE=strict` → 109 本书 0 本通过（97%/0.5 硬指标生效） |
 
 ## 已知限制
 
@@ -169,8 +169,8 @@ docs/ARCHITECTURE.md    架构设计
 - **章节标题**：有 CHAPTER/PART/ADVENTURE 标记的书能拿到真实章名；Sherlock 这类用裸罗马数字或独立小标题的书，会被按 ~3500 词切成「Chapter 1（1）」这样的通用分节名。
 - **长难句**只有难度分与关键词，没有句法拆解（主干/从句），预习里是"先自己读一遍"。
 - **没有登录**，多人使用会共享同一份 demo 数据。
-- **SQLite** 单文件，适合本地；上线要换 PostgreSQL（schema 已按此预留）。57 本书的产物约 56MB，只有过闸的书才会落正文。
-- 内容覆盖：候选 59 本 → 命中 57 本；加书改 `content-pipeline/candidates.json` 即可。
+- **SQLite** 单文件，适合本地；上线要换 PostgreSQL（schema 已按此预留）。109 本书的产物约 100MB，只有过闸的书才会落正文。
+- 内容覆盖：候选 109 本 → 命中 109 本；加书改 `content-pipeline/candidates.json` 即可。
 
 ## 下一步（按优先级）
 
