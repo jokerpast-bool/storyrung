@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  check:
+    name: 类型检查 + 单元测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 生成 Prisma Client
+        run: npm run db:generate --workspace @er/web
+
+      - name: 类型检查
+        run: npm run typecheck --workspace @er/web
+
+      - name: 单元测试
+        run: npm test --workspace @er/web
+
+  build:
+    name: 生产构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 生成 Prisma Client
+        run: npm run db:generate --workspace @er/web
+
+      - name: 建空库（页面全部 force-dynamic，构建不需要内容数据）
+        run: npx prisma db push --schema apps/web/prisma/schema.prisma --skip-generate
+
+      - name: 构建
+        run: npm run build --workspace @er/web
