@@ -69,8 +69,6 @@ function BookTile({
   );
 }
 
-const FAIL_PREVIEW = 8;
-
 export default async function LibraryPage({
   searchParams,
 }: {
@@ -88,7 +86,7 @@ export default async function LibraryPage({
     listLibrary(user.id, known, { admission: "challenge", level: levelFilter }),
     listLibrary(user.id, known, { admission: "fail", level: levelFilter }),
   ]);
-  const failPreview = [...rejected].sort((a, b) => b.gateCoverage - a.gateCoverage).slice(0, FAIL_PREVIEW);
+  const failList = [...rejected].sort((a, b) => b.gateCoverage - a.gateCoverage);
 
   return (
     <main>
@@ -163,7 +161,7 @@ export default async function LibraryPage({
           <h2 style={{ fontSize: 20 }}>需改写</h2>
           <span className="badge danger">{rejected.length}</span>
         </div>
-        <div className="card" style={{ padding: 0, overflowX: "auto" }}>
+        <div className="card" style={{ padding: 0, overflowX: "auto", maxHeight: 560, overflowY: "auto" }}>
           <table className="table">
             <thead>
               <tr>
@@ -173,10 +171,12 @@ export default async function LibraryPage({
               </tr>
             </thead>
             <tbody>
-              {failPreview.map((book) => (
+              {failList.map((book) => (
                 <tr key={book.id}>
                   <td>
-                    <b>{book.title}</b>
+                    <Link href={`/book/${book.slug}`}>
+                      <b>{book.title}</b>
+                    </Link>
                     <div className="muted tiny">{book.author}</div>
                   </td>
                   <td>{pct(book.gateCoverage)}</td>
@@ -186,11 +186,6 @@ export default async function LibraryPage({
             </tbody>
           </table>
         </div>
-        {rejected.length > FAIL_PREVIEW && (
-          <p className="muted tiny" style={{ marginTop: 8 }}>
-            另有 {rejected.length - FAIL_PREVIEW} 本未达标
-          </p>
-        )}
       </section>
     </main>
   );

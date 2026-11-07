@@ -40,6 +40,14 @@
     "description": "Wilde, Oscar · Project Gutenberg #174（1994）。难度与是否可读由管线实测判定。"
   },
   {
+    "gutenbergId": 74,
+    "slug": "the-adventures-of-tom-sawyer",
+    "title": "The Adventures of Tom Sawyer",
+    "author": "Twain, Mark",
+    "emoji": "📘",
+    "description": "Twain, Mark · Project Gutenberg #74（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
     "gutenbergId": 76,
     "slug": "adventures-of-huckleberry-finn",
     "title": "Adventures of Huckleberry Finn",
@@ -105,8 +113,8 @@
   },
   {
     "gutenbergId": 5230,
-    "slug": "the-invisible-man-a-grotesque-romance",
-    "title": "The Invisible Man: A Grotesque Romance",
+    "slug": "the-invisible-man",
+    "title": "The Invisible Man",
     "author": "Wells, H. G.",
     "emoji": "⏳",
     "description": "Wells, H. G. · Project Gutenberg #5230（2004）。难度与是否可读由管线实测判定。"
@@ -114,7 +122,7 @@
   {
     "gutenbergId": 36,
     "slug": "the-war-of-the-worlds",
-    "title": "The war of the worlds",
+    "title": "The War of the Worlds",
     "author": "Wells, H. G.",
     "emoji": "⏳",
     "description": "Wells, H. G. · Project Gutenberg #36（2004）。难度与是否可读由管线实测判定。"
@@ -138,15 +146,15 @@
   {
     "gutenbergId": 42,
     "slug": "the-strange-case-of-dr-jekyll-and-mr-hyde",
-    "title": "The strange case of Dr. Jekyll and Mr. Hyde",
+    "title": "The Strange Case of Dr. Jekyll and Mr. Hyde",
     "author": "Stevenson, Robert Louis",
     "emoji": "🏴‍☠️",
     "description": "Stevenson, Robert Louis · Project Gutenberg #42（1992）。难度与是否可读由管线实测判定。"
   },
   {
     "gutenbergId": 84,
-    "slug": "frankenstein-or-the-modern-prometheus",
-    "title": "Frankenstein; or, The modern Prometheus",
+    "slug": "frankenstein",
+    "title": "Frankenstein",
     "author": "Shelley, Mary Wollstonecraft",
     "emoji": "🕯️",
     "description": "Shelley, Mary Wollstonecraft · Project Gutenberg #84（1993）。难度与是否可读由管线实测判定。"
@@ -170,7 +178,7 @@
   {
     "gutenbergId": 215,
     "slug": "the-call-of-the-wild",
-    "title": "The call of the wild",
+    "title": "The Call of the Wild",
     "author": "London, Jack",
     "emoji": "🐺",
     "description": "London, Jack · Project Gutenberg #215（2008）。难度与是否可读由管线实测判定。"
@@ -194,7 +202,7 @@
   {
     "gutenbergId": 2781,
     "slug": "just-so-stories",
-    "title": "Just so stories",
+    "title": "Just So Stories",
     "author": "Kipling, Rudyard",
     "emoji": "🐅",
     "description": "Kipling, Rudyard · Project Gutenberg #2781（2001）。难度与是否可读由管线实测判定。"
@@ -208,12 +216,12 @@
     "description": "Burnett, Frances Hodgson · Project Gutenberg #113（1994）。难度与是否可读由管线实测判定。"
   },
   {
-    "gutenbergId": 37332,
-    "slug": "a-little-princess-being-the-whole-story-of-sara-crewe-now-to",
-    "title": "A Little Princess: Being the whole story of Sara Crewe now told for th…",
+    "gutenbergId": 146,
+    "slug": "a-little-princess",
+    "title": "A Little Princess",
     "author": "Burnett, Frances Hodgson",
     "emoji": "🌿",
-    "description": "Burnett, Frances Hodgson · Project Gutenberg #37332（2011）。难度与是否可读由管线实测判定。"
+    "description": "Burnett, Frances Hodgson · Project Gutenberg #146（1994）。难度与是否可读由管线实测判定。"
   },
   {
     "gutenbergId": 479,
@@ -282,7 +290,7 @@
   {
     "gutenbergId": 2591,
     "slug": "grimms-fairy-tales",
-    "title": "Grimms' Fairy Tales",
+    "title": "Grimm's Fairy Tales",
     "author": "Grimm, Jacob",
     "emoji": "🧚",
     "description": "Grimm, Jacob · Project Gutenberg #2591（2001）。难度与是否可读由管线实测判定。"
@@ -306,7 +314,7 @@
   {
     "gutenbergId": 1257,
     "slug": "the-three-musketeers",
-    "title": "The three musketeers",
+    "title": "The Three Musketeers",
     "author": "Dumas, Alexandre",
     "emoji": "🗺️",
     "description": "Dumas, Alexandre · Project Gutenberg #1257（1998）。难度与是否可读由管线实测判定。"
@@ -338,7 +346,7 @@
   {
     "gutenbergId": 95,
     "slug": "the-prisoner-of-zenda",
-    "title": "The prisoner of Zenda",
+    "title": "The Prisoner of Zenda",
     "author": "Hope, Anthony",
     "emoji": "🎩",
     "description": "Hope, Anthony · Project Gutenberg #95（2006）。难度与是否可读由管线实测判定。"
@@ -401,16 +409,16 @@
   },
   {
     "gutenbergId": 73,
-    "slug": "the-red-badge-of-courage-an-episode-of-the-american-civil-wa",
-    "title": "The Red Badge of Courage: An Episode of the American Civil War",
+    "slug": "the-red-badge-of-courage",
+    "title": "The Red Badge of Courage",
     "author": "Crane, Stephen",
     "emoji": "📖",
     "description": "Crane, Stephen · Project Gutenberg #73（1993）。难度与是否可读由管线实测判定。"
   },
   {
     "gutenbergId": 1260,
-    "slug": "jane-eyre-an-autobiography",
-    "title": "Jane Eyre: An Autobiography",
+    "slug": "jane-eyre",
+    "title": "Jane Eyre",
     "author": "Brontë, Charlotte",
     "emoji": "📖",
     "description": "Brontë, Charlotte · Project Gutenberg #1260（1998）。难度与是否可读由管线实测判定。"
@@ -426,7 +434,7 @@
   {
     "gutenbergId": 15,
     "slug": "moby-dick-or-the-whale",
-    "title": "Moby-Dick; or, The Whale",
+    "title": "Moby Dick; Or, The Whale",
     "author": "Melville, Herman",
     "emoji": "📖",
     "description": "Melville, Herman · Project Gutenberg #15（1991）。难度与是否可读由管线实测判定。"
@@ -441,11 +449,19 @@
   },
   {
     "gutenbergId": 208,
-    "slug": "daisy-miller-a-study",
-    "title": "Daisy Miller: A Study",
+    "slug": "daisy-miller",
+    "title": "Daisy Miller",
     "author": "James, Henry",
     "emoji": "📘",
     "description": "James, Henry · Project Gutenberg #208（2008）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 160,
+    "slug": "the-awakening",
+    "title": "The Awakening",
+    "author": "Chopin, Kate",
+    "emoji": "📘",
+    "description": "Chopin, Kate · Project Gutenberg #160（2006）。难度与是否可读由管线实测判定。"
   },
   {
     "gutenbergId": 219,
@@ -454,5 +470,405 @@
     "author": "Conrad, Joseph",
     "emoji": "📘",
     "description": "Conrad, Joseph · Project Gutenberg #219（2006）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 54,
+    "slug": "the-marvelous-land-of-oz",
+    "title": "The Marvelous Land of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #54（1993）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 486,
+    "slug": "ozma-of-oz",
+    "title": "Ozma of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #486（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 420,
+    "slug": "dorothy-and-the-wizard-in-oz",
+    "title": "Dorothy and the Wizard in Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #420（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 485,
+    "slug": "the-road-to-oz",
+    "title": "The Road to Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #485（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 517,
+    "slug": "the-emerald-city-of-oz",
+    "title": "The Emerald City of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #517（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 955,
+    "slug": "the-patchwork-girl-of-oz",
+    "title": "The Patchwork Girl of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #955（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 956,
+    "slug": "tik-tok-of-oz",
+    "title": "Tik-Tok of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #956（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 957,
+    "slug": "the-scarecrow-of-oz",
+    "title": "The Scarecrow of Oz",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #957（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 518,
+    "slug": "the-enchanted-island-of-yew",
+    "title": "The Enchanted Island of Yew",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #518（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 55737,
+    "slug": "queen-zixi-of-ix",
+    "title": "Queen Zixi of Ix",
+    "author": "Baum, L. Frank",
+    "emoji": "📘",
+    "description": "Baum, L. Frank · Project Gutenberg #55737（2017）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 4357,
+    "slug": "american-fairy-tales",
+    "title": "American Fairy Tales",
+    "author": "Baum, L. Frank",
+    "emoji": "🧚",
+    "description": "Baum, L. Frank · Project Gutenberg #4357（2003）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 1825,
+    "slug": "the-adventures-of-reddy-fox",
+    "title": "The Adventures of Reddy Fox",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #1825（1999）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 2557,
+    "slug": "old-mother-west-wind",
+    "title": "Old Mother West Wind",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #2557（2001）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 25301,
+    "slug": "the-adventures-of-danny-meadow-mouse",
+    "title": "The Adventures of Danny Meadow Mouse",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #25301（2008）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 37952,
+    "slug": "the-adventures-of-chatterer-the-red-squirrel",
+    "title": "The Adventures of Chatterer the Red Squirrel",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #37952（2011）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 22816,
+    "slug": "the-adventures-of-buster-bear",
+    "title": "The Adventures of Buster Bear",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #22816（2007）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 46866,
+    "slug": "the-adventures-of-peter-cottontail",
+    "title": "The Adventures of Peter Cottontail",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #46866（2014）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 5844,
+    "slug": "the-adventures-of-johnny-chuck",
+    "title": "The Adventures of Johnny Chuck",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #5844（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 43596,
+    "slug": "the-adventures-of-sammy-jay",
+    "title": "The Adventures of Sammy Jay",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #43596（2013）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 5110,
+    "slug": "the-adventures-of-jerry-muskrat",
+    "title": "The Adventures of Jerry Muskrat",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #5110（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14375,
+    "slug": "the-adventures-of-grandfather-frog",
+    "title": "The Adventures of Grandfather Frog",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #14375（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 2493,
+    "slug": "the-adventures-of-paddy-the-beaver",
+    "title": "The Adventures of Paddy the Beaver",
+    "author": "Burgess, Thornton W.",
+    "emoji": "📘",
+    "description": "Burgess, Thornton W. · Project Gutenberg #2493（2001）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14304,
+    "slug": "the-tale-of-peter-rabbit",
+    "title": "The Tale of Peter Rabbit",
+    "author": "Potter, Beatrix",
+    "emoji": "📘",
+    "description": "Potter, Beatrix · Project Gutenberg #14304（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14407,
+    "slug": "the-tale-of-benjamin-bunny",
+    "title": "The Tale of Benjamin Bunny",
+    "author": "Potter, Beatrix",
+    "emoji": "📘",
+    "description": "Potter, Beatrix · Project Gutenberg #14407（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14872,
+    "slug": "the-tale-of-squirrel-nutkin",
+    "title": "The Tale of Squirrel Nutkin",
+    "author": "Potter, Beatrix",
+    "emoji": "📘",
+    "description": "Potter, Beatrix · Project Gutenberg #14872（2005）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14837,
+    "slug": "the-tale-of-tom-kitten",
+    "title": "The Tale of Tom Kitten",
+    "author": "Potter, Beatrix",
+    "emoji": "📘",
+    "description": "Potter, Beatrix · Project Gutenberg #14837（2005）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 12103,
+    "slug": "the-tale-of-mrs-tiggy-winkle",
+    "title": "The Tale of Mrs. Tiggy-Winkle",
+    "author": "Potter, Beatrix",
+    "emoji": "📘",
+    "description": "Potter, Beatrix · Project Gutenberg #12103（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 770,
+    "slug": "the-story-of-the-treasure-seekers",
+    "title": "The Story of the Treasure Seekers",
+    "author": "Nesbit, E.",
+    "emoji": "📘",
+    "description": "Nesbit, E. · Project Gutenberg #770（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 3536,
+    "slug": "the-enchanted-castle",
+    "title": "The Enchanted Castle",
+    "author": "Nesbit, E.",
+    "emoji": "📘",
+    "description": "Nesbit, E. · Project Gutenberg #3536（2002）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 836,
+    "slug": "the-phoenix-and-the-carpet",
+    "title": "The Phoenix and the Carpet",
+    "author": "Nesbit, E.",
+    "emoji": "📘",
+    "description": "Nesbit, E. · Project Gutenberg #836（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 837,
+    "slug": "the-story-of-the-amulet",
+    "title": "The Story of the Amulet",
+    "author": "Nesbit, E.",
+    "emoji": "📘",
+    "description": "Nesbit, E. · Project Gutenberg #837（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 501,
+    "slug": "the-story-of-doctor-dolittle",
+    "title": "The Story of Doctor Dolittle",
+    "author": "Lofting, Hugh",
+    "emoji": "📘",
+    "description": "Lofting, Hugh · Project Gutenberg #501（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 1154,
+    "slug": "the-voyages-of-doctor-dolittle",
+    "title": "The Voyages of Doctor Dolittle",
+    "author": "Lofting, Hugh",
+    "emoji": "📘",
+    "description": "Lofting, Hugh · Project Gutenberg #1154（1998）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 1450,
+    "slug": "pollyanna",
+    "title": "Pollyanna",
+    "author": "Porter, Eleanor H.",
+    "emoji": "📘",
+    "description": "Porter, Eleanor H. · Project Gutenberg #1450（1998）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 6100,
+    "slug": "pollyanna-grows-up",
+    "title": "Pollyanna Grows Up",
+    "author": "Porter, Eleanor H.",
+    "emoji": "📘",
+    "description": "Porter, Eleanor H. · Project Gutenberg #6100（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 498,
+    "slug": "rebecca-of-sunnybrook-farm",
+    "title": "Rebecca of Sunnybrook Farm",
+    "author": "Wiggin, Kate Douglas Smith",
+    "emoji": "📘",
+    "description": "Wiggin, Kate Douglas Smith · Project Gutenberg #498（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 1448,
+    "slug": "heidi",
+    "title": "Heidi",
+    "author": "Spyri, Johanna",
+    "emoji": "📘",
+    "description": "Spyri, Johanna · Project Gutenberg #1448（1998）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 1018,
+    "slug": "the-water-babies",
+    "title": "The Water-Babies",
+    "author": "Kingsley, Charles",
+    "emoji": "📘",
+    "description": "Kingsley, Charles · Project Gutenberg #1018（1997）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 708,
+    "slug": "the-princess-and-the-goblin",
+    "title": "The Princess and the Goblin",
+    "author": "MacDonald, George",
+    "emoji": "📘",
+    "description": "MacDonald, George · Project Gutenberg #708（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 225,
+    "slug": "at-the-back-of-the-north-wind",
+    "title": "At the Back of the North Wind",
+    "author": "MacDonald, George",
+    "emoji": "📘",
+    "description": "MacDonald, George · Project Gutenberg #225（2008）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 7439,
+    "slug": "english-fairy-tales",
+    "title": "English Fairy Tales",
+    "author": "Jacobs, Joseph, 1854-1916 [Compiler]",
+    "emoji": "🧚",
+    "description": "Jacobs, Joseph, 1854-1916 [Compiler] · Project Gutenberg #7439（2005）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 14241,
+    "slug": "more-english-fairy-tales",
+    "title": "More English Fairy Tales",
+    "author": "Jacobs, Joseph, 1854-1916 [Compiler]",
+    "emoji": "🧚",
+    "description": "Jacobs, Joseph, 1854-1916 [Compiler] · Project Gutenberg #14241（2004）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 503,
+    "slug": "the-blue-fairy-book",
+    "title": "The Blue Fairy Book",
+    "author": "Lang, Andrew",
+    "emoji": "🧚",
+    "description": "Lang, Andrew · Project Gutenberg #503（2005）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 540,
+    "slug": "the-red-fairy-book",
+    "title": "The Red Fairy Book",
+    "author": "Lang, Andrew, 1844-1912 [Editor]",
+    "emoji": "🧚",
+    "description": "Lang, Andrew, 1844-1912 [Editor] · Project Gutenberg #540（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 28,
+    "slug": "the-fables-of-aesop",
+    "title": "The Fables of Aesop",
+    "author": "Aesop, 621? BCE-565? BCE",
+    "emoji": "🧚",
+    "description": "Aesop, 621? BCE-565? BCE · Project Gutenberg #28（1992）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 964,
+    "slug": "the-merry-adventures-of-robin-hood",
+    "title": "The Merry Adventures of Robin Hood",
+    "author": "Pyle, Howard",
+    "emoji": "📘",
+    "description": "Pyle, Howard · Project Gutenberg #964（2006）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 2865,
+    "slug": "otto-of-the-silver-hand",
+    "title": "Otto of the Silver Hand",
+    "author": "Pyle, Howard",
+    "emoji": "📘",
+    "description": "Pyle, Howard · Project Gutenberg #2865（2001）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 3836,
+    "slug": "the-swiss-family-robinson",
+    "title": "The Swiss Family Robinson",
+    "author": "Wyss, Johann David",
+    "emoji": "📘",
+    "description": "Wyss, Johann David · Project Gutenberg #3836（2003）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 646,
+    "slug": "the-coral-island",
+    "title": "The Coral Island",
+    "author": "Ballantyne, R. M.",
+    "emoji": "📘",
+    "description": "Ballantyne, R. M. · Project Gutenberg #646（1996）。难度与是否可读由管线实测判定。"
+  },
+  {
+    "gutenbergId": 18190,
+    "slug": "raggedy-ann-stories",
+    "title": "Raggedy Ann Stories",
+    "author": "Gruelle, Johnny",
+    "emoji": "📘",
+    "description": "Gruelle, Johnny · Project Gutenberg #18190（2006）。难度与是否可读由管线实测判定。"
   }
 ]

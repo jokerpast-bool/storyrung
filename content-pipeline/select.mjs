@@ -59,8 +59,9 @@ async function ensureCatalog() {
 /** 归一化书名：去掉冠词、标点、副标题、大小写差异。 */
 function normalizeTitle(title) {
   return title
+    .split("\n")[0] // 目录里副标题常写在第二行（\r\n 分隔），只取主标题
     .toLowerCase()
-    .split(/[:;(]|, or the /)[0]
+    .split(/[:;(]|, or the |, and selected|, complete|, part \d/)[0]
     .replace(/['’"“”]/g, "")
     .replace(/[^a-z0-9 ]/g, " ")
     .replace(/^(the|a|an)\s+/, "")
@@ -161,12 +162,13 @@ async function main() {
       missed.push(candidate.title);
       continue;
     }
+    // 显示名与 slug 用候选里的干净书名；目录标题常带一长串副标题（"Ozma of Oz A Record of Her..."）
     picked.push({
       gutenbergId: match.id,
-      slug: slugify(match.title),
-      title: cleanTitle(match.title),
+      slug: slugify(candidate.title),
+      title: candidate.title,
       author: cleanAuthor(match.author) || candidate.authorHint || "Unknown",
-      emoji: emojiFor(match.title),
+      emoji: emojiFor(candidate.title),
       description:
         candidate.description ??
         `${cleanAuthor(match.author)} · Project Gutenberg #${match.id}（${match.issued.slice(0, 4)}）。难度与是否可读由管线实测判定。`,
