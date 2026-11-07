@@ -481,3 +481,66 @@ body {
     font-size: 30px;
   }
 }
+
+/* ---------- AI 生成图：书封 / 章节插图 ---------- */
+.cover.has-art {
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(20, 16, 10, 0.18);
+}
+
+.cover .cover-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover.has-art::before {
+  z-index: 2;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.06) 22%, rgba(255, 255, 255, 0.08) 70%, rgba(0, 0, 0, 0.16));
+  width: 100%;
+}
+
+.chapter-art {
+  max-width: 760px;
+  margin: 18px auto 0;
+}
+
+.chapter-art img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+}
+
+.chapter-art figcaption {
+  margin-top: 8px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.chapter-art-empty {
+  max-width: 760px;
+  margin: 16px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spin {
+  animation: er-spin 1s linear infinite;
+}
+
+@keyframes er-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import BookCover from "@/components/BookCover";
 import { activeThresholds, getGate } from "@/lib/gate";
+import { coverUrl } from "@/lib/generated-art";
 import { getBookDetail } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
@@ -39,7 +40,7 @@ export default async function BookPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div className="row" style={{ alignItems: "flex-start", gap: 18 }}>
-        <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" />
+        <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" src={coverUrl(book.slug)} />
         <div>
           <h1 style={{ fontSize: 32, marginBottom: 6 }}>{book.title}</h1>
           <div className="row">
@@ -118,7 +119,7 @@ export default async function BookPage({ params }: { params: Promise<{ slug: str
 
         {book.admission === "fail" ? (
           <div className="note danger">
-            未通过准入闸，未上架正文。
+            正文暂未上架。
             <div style={{ marginTop: 8 }}>
               <Link href="/library" className="btn">
                 回书库

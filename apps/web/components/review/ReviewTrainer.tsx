@@ -63,7 +63,6 @@ export default function ReviewTrainer({ cards }: { cards: Card[] }) {
 
       <div>
         <div className="quiz-word">{card.lemma}</div>
-        <div className="quiz-sub">先回想中文意思，再翻面</div>
       </div>
 
       {revealed ? (

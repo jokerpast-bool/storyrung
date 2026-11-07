@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import BookCover from "@/components/BookCover";
 import { activeThresholds, getGate, GATE_LABEL } from "@/lib/gate";
+import { coverUrl } from "@/lib/generated-art";
 import { listLibrary, type BookCard } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
@@ -22,10 +23,12 @@ function CoverageBar({ value, threshold }: { value: number; threshold: number })
 
 function BookTile({
   book,
+  cover,
   threshold,
   challenge = false,
 }: {
   book: BookCard;
+  cover: string | null;
   threshold: number;
   challenge?: boolean;
 }) {
@@ -33,7 +36,7 @@ function BookTile({
     <Link href={`/book/${book.slug}`} className="card hover">
       <div className="row" style={{ justifyContent: "space-between" }}>
         <div className="row" style={{ gap: 10, minWidth: 0 }}>
-          <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} />
+          <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} src={cover} />
           <div style={{ minWidth: 0 }}>
             <h3 style={{ margin: 0 }}>{book.title}</h3>
             <div className="muted tiny">{book.author}</div>
@@ -125,11 +128,11 @@ export default async function LibraryPage({
           <span className="badge accent">{readable.length}</span>
         </div>
         {readable.length === 0 ? (
-          <div className="empty">暂无通过准入闸的书。</div>
+          <div className="empty">暂无书。</div>
         ) : (
           <div className="grid">
             {readable.map((book) => (
-              <BookTile key={book.id} book={book} threshold={thresholds.coverage} />
+              <BookTile key={book.id} book={book} cover={coverUrl(book.slug)} threshold={thresholds.coverage} />
             ))}
           </div>
         )}
@@ -143,7 +146,13 @@ export default async function LibraryPage({
           </div>
           <div className="grid">
             {challenges.map((book) => (
-              <BookTile key={book.id} book={book} threshold={thresholds.coverage} challenge />
+              <BookTile
+                key={book.id}
+                book={book}
+                cover={coverUrl(book.slug)}
+                threshold={thresholds.coverage}
+                challenge
+              />
             ))}
           </div>
         </section>

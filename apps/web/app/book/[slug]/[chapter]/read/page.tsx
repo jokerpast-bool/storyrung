@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import ChapterArt from "@/components/ChapterArt";
 import Reader from "@/components/reader/Reader";
+import { chapterArtUrl } from "@/lib/generated-art";
 import { getReaderView } from "@/lib/services/chapter";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
@@ -22,6 +24,7 @@ export default async function ReadPage({
   if (!view) notFound();
 
   const needsPrep = view.prepStatus === "locked";
+  const art = chapterArtUrl(slug, chapterIndex);
 
   return (
     <>
@@ -30,6 +33,12 @@ export default async function ReadPage({
           这一章还没预习 · <Link href={`/book/${slug}/${chapterIndex}/prep`}>先练生词 →</Link>
         </div>
       )}
+      <ChapterArt
+        bookSlug={slug}
+        chapterIndex={chapterIndex}
+        src={art}
+        caption={`${view.chapter.bookTitle} · 第 ${chapterIndex} 章`}
+      />
       <Reader
         chapterId={view.chapter.id}
         bookSlug={slug}

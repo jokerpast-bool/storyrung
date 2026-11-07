@@ -51,7 +51,7 @@ export default async function PrepPage({
 
       {view.words.length === 0 && view.phrases.length === 0 ? (
         <div className="empty">
-          这章没有需要预习的词。
+          这章没有生词。
           <div style={{ marginTop: 16 }}>
             <Link className="btn primary" href={`/book/${slug}/${chapterIndex}/read`}>
               开始阅读 →

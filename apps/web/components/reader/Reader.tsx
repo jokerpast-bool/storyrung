@@ -82,7 +82,7 @@ export default function Reader(props: Props) {
             data ??
             {
               lemma,
-              definitionZh: "词库里没有这个词（可能是人名或专有名词）",
+              definitionZh: "词库里没有这个词",
               phonetic: "",
               pos: "",
               band: "beyond",
@@ -238,7 +238,6 @@ export default function Reader(props: Props) {
             {popover.data.freqRank > 0 && <span>词频 #{popover.data.freqRank}</span>}
           </div>
           <div className="popover-def">{popover.data.definitionZh}</div>
-          <div className="popover-foot">已加入生词本 · 按 Esc 关闭</div>
         </div>
       )}
     </main>

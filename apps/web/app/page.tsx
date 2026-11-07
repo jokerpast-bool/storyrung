@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import BookCover from "@/components/BookCover";
 import { prisma } from "@/lib/db";
+import { coverUrl } from "@/lib/generated-art";
 import { listLibrary } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
@@ -24,15 +25,6 @@ export default async function HomePage() {
   return (
     <main>
       <section className="hero-panel">
-        <h1>
-          先练生词，
-          <br />
-          再读原著
-        </h1>
-        <p className="lead" style={{ marginBottom: 22 }}>
-          按词汇量分级推荐公版英文书，每章先练该章生词，达标再读。
-        </p>
-
         <div className="row">
           {hasLevel ? (
             <>
@@ -59,7 +51,13 @@ export default async function HomePage() {
           <div className="hero-books">
             {shelf.map((book) => (
               <Link key={book.id} href={`/book/${book.slug}`} title={book.title}>
-                <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" />
+                <BookCover
+                  slug={book.slug}
+                  title={book.title}
+                  emoji={book.coverEmoji}
+                  size="lg"
+                  src={coverUrl(book.slug)}
+                />
               </Link>
             ))}
           </div>
@@ -85,26 +83,6 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="grid" style={{ marginTop: 26 }}>
-        <div className="card">
-          <h3>测词汇量</h3>
-          <p className="muted small" style={{ margin: 0 }}>
-            24 题看词选义，定四级/六级。
-          </p>
-        </div>
-        <div className="card">
-          <h3>按可读性选书</h3>
-          <p className="muted small" style={{ margin: 0 }}>
-            覆盖率达标才进书库，不达标进改写队列。
-          </p>
-        </div>
-        <div className="card">
-          <h3>先练后读</h3>
-          <p className="muted small" style={{ margin: 0 }}>
-            每章 ≤12 词、≤4 短语、≤3 长难句。
-          </p>
-        </div>
-      </section>
     </main>
   );
 }

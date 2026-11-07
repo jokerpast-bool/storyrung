@@ -102,7 +102,7 @@ export default function PrepTrainer(props: Props) {
           掌握度 {score.toFixed(2)} / 0.70 · 覆盖率 {(coverage * 100).toFixed(1)}%
         </p>
         <div className={`note ${unlocked ? "" : "warn"}`}>
-          {unlocked ? "已达标，可以开始阅读。" : "未达标：可再练一遍，或直接读。"}
+          {unlocked ? "已达标" : "未达标"}
         </div>
         <div className="row" style={{ marginTop: "auto" }}>
           <Link className="btn primary" href={`/book/${bookSlug}/${chapterIndex}/read`}>
@@ -139,8 +139,8 @@ export default function PrepTrainer(props: Props) {
           {step.item.text}
         </p>
         <p className="muted small" style={{ margin: 0 }}>
-          先自己读一遍，找出主干（谁 + 做了什么）。句中关键词：
-          {step.item.keyVocab.length > 0 ? step.item.keyVocab.join(" / ") : "（无）"}
+          主干（谁 + 做了什么）：
+          {step.item.keyVocab.length > 0 ? step.item.keyVocab.join(" / ") : "—"}
         </p>
         <div className="row" style={{ marginTop: "auto" }}>
           <button type="button" className="btn primary" onClick={next}>

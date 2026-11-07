@@ -68,7 +68,7 @@ export default function LevelTest({ items }: { items: Item[] }) {
       <div className="quiz-card">
         <h2 style={{ marginBottom: 4 }}>词汇量测评</h2>
         <p className="muted small" style={{ marginTop: 0 }}>
-          看词选义，{items.length} 题，约 2 分钟。计分已扣除猜对率。
+          看词选义 · {items.length} 题
         </p>
         <div className="row" style={{ marginTop: "auto" }}>
           <button type="button" className="btn primary" onClick={() => setStage("quiz")}>
@@ -103,7 +103,7 @@ export default function LevelTest({ items }: { items: Item[] }) {
         </div>
 
         <div className="stack" style={{ gap: 8 }}>
-          <div className="quiz-sub">分段正确率（已扣猜对）</div>
+          <div className="quiz-sub">分段正确率</div>
           {result.bands.map((band) => {
             const corrected = band.total > 0 ? Math.max(0, (band.rate - 0.25) / 0.75) : 0;
             return (

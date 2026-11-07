@@ -53,7 +53,7 @@ export default async function VocabPage({
         <div>
           <h1 style={{ fontSize: 30 }}>生词本</h1>
           <p className="muted small" style={{ margin: 0 }}>
-            共 {total} 条 · 来自测评、预习和阅读中点词
+            共 {total} 条
           </p>
         </div>
         <Link href="/review" className="btn">
@@ -75,7 +75,7 @@ export default async function VocabPage({
       </div>
 
       {rows.length === 0 ? (
-        <div className="empty">还没有生词记录。测一次词汇量或读一章就会有了。</div>
+        <div className="empty">暂无记录。</div>
       ) : (
         <div className="card" style={{ padding: 0, overflowX: "auto" }}>
           <table className="table">

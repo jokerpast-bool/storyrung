@@ -17,25 +17,37 @@ function hueOf(seed: string): number {
 }
 
 /**
- * 用书名生成 deterministic 的书封：同一条书目每次渲染颜色一致，
- * 不需要外部图片、也不会有版权问题。
+ * 书封：有 AI 生成图就用图，没有就退回 deterministic 的渐变色块，
+ * 保证任何一本书在任何时候都有封面可看。
  */
 export default function BookCover({
   slug,
   title,
   emoji,
   size = "sm",
+  src,
 }: {
   slug: string;
   title: string;
   emoji: string;
   size?: "sm" | "lg";
+  src?: string | null;
 }) {
   const hue = hueOf(slug);
   const background = `linear-gradient(150deg, hsl(${hue} 42% 46%), hsl(${(hue + 48) % 360} 48% 26%))`;
+  const className = `cover ${size === "lg" ? "lg" : ""}`;
+
+  if (src) {
+    return (
+      <div className={`${className} has-art`} style={{ background }} aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="cover-art" src={src} alt="" loading="lazy" decoding="async" />
+      </div>
+    );
+  }
 
   return (
-    <div className={`cover ${size === "lg" ? "lg" : ""}`} style={{ background }} aria-hidden>
+    <div className={className} style={{ background }} aria-hidden>
       <span className="cover-emoji">{emoji}</span>
       <span className="cover-mark">{initialsOf(title)}</span>
     </div>

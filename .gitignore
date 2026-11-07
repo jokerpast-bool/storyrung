@@ -19,4 +19,6 @@ data/books/
 data/catalog/
 *.tsbuildinfo
 
+apps/web/public/generated/
+
 .dsh-acl-recovery/

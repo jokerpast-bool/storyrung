@@ -25,7 +25,7 @@ export default async function LevelTestPage() {
       </div>
 
       {items.length === 0 ? (
-        <div className="empty">题库还没生成，先跑一遍内容管线与 seed。</div>
+        <div className="empty">暂无题库。</div>
       ) : (
         <div style={{ maxWidth: 620 }}>
           <LevelTest
