@@ -1,0 +1,16 @@
+{
+  "name": "english-reading",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/web",
+    "content-pipeline"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @er/web",
+    "build": "npm run build --workspace @er/web",
+    "db:push": "npm run db:push --workspace @er/web",
+    "db:seed": "npm run db:seed --workspace @er/web",
+    "pipeline": "npm run build:data --workspace @er/pipeline"
+  }
+}

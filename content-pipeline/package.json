@@ -1,0 +1,13 @@
+{
+  "name": "@er/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:data": "node build.mjs"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.6",
+    "ecdict": "^0.0.4"
+  }
+}

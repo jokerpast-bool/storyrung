@@ -1,0 +1,192 @@
+// M0 uses SQLite: enums/JSON become String (validated by zod in lib/domain).
+// Switch to PostgreSQL + Json/enum types when deployment needs it.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String?  @unique
+  name           String   @default("Learner")
+  level          String   @default("unknown") // cet4 | cet6 | unknown
+  vocabSize      Int      @default(0)
+  levelConfidence Float   @default(0)
+  createdAt      DateTime @default(now())
+
+  vocabStates    UserVocabState[]
+  progress       ChapterProgress[]
+  attempts       Attempt[]
+  cards          ReviewCard[]
+}
+
+model LevelItem {
+  id           String @id @default(cuid())
+  lemma        String
+  band         Int // 1..6 frequency bucket
+  definitionZh String
+  pos          String @default("")
+  freqRank     Int    @default(999999)
+}
+
+model Book {
+  id                   String  @id @default(cuid())
+  slug                 String  @unique
+  title                String
+  author               String
+  level                String // cet4 | cet6
+  description          String  @default("")
+  license              String  @default("public-domain")
+  sourceUrl            String  @default("")
+  coverEmoji           String  @default("📘")
+  wordCount            Int     @default(0)
+  chapterCount         Int     @default(0)
+  tokenCount           Int     @default(0)
+  difficulty           Float   @default(0)
+  // admission gate (computed offline against the level's baseline reader)
+  admission            String  @default("pending") // pass | fail | pending
+  gateCoverage         Float   @default(0)
+  gateUnknownPerSentence Float @default(0)
+  gateReason           String  @default("")
+  lemmaCounts          String  @default("{}") // JSON: { lemma: count }
+
+  chapters             Chapter[]
+}
+
+/// 全书去重词表：既是运行时查词词典，也是"词频前 N 算认识"的基准来源。
+model LemmaIndex {
+  lemma        String @id
+  freqRank     Int    @default(999999)
+  band         String @default("beyond") // cet4 | cet6 | beyond
+  definitionZh String @default("")
+  phonetic     String @default("")
+  pos          String @default("")
+  inBooks      Int    @default(0)
+}
+
+model Chapter {
+  id            String @id @default(cuid())
+  bookId        String
+  index         Int
+  title         String
+  wordCount     Int    @default(0)
+  sentenceCount Int    @default(0)
+  hardSentences Int    @default(0)
+  difficulty    Float  @default(0)
+  estMinutes    Int    @default(0)
+  lemmaCounts   String @default("{}") // JSON: { lemma: count }
+
+  book          Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  vocab         ChapterVocab[]
+  sentences     ChapterSentence[]
+  progress      ChapterProgress[]
+
+  @@unique([bookId, index])
+}
+
+model ChapterVocab {
+  id              String @id @default(cuid())
+  chapterId       String
+  lemma           String
+  kind            String @default("word") // word | phrase
+  phrase          String @default("")
+  surfaceForms    String @default("[]") // JSON string[]
+  pos             String @default("")
+  phonetic        String @default("")
+  definitionZh    String @default("")
+  freqRank        Int    @default(999999)
+  band            String @default("beyond") // cet4 | cet6 | beyond
+  importance      Float  @default(0)
+  occurrenceCount Int    @default(1)
+
+  chapter         Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, lemma])
+  @@index([chapterId, importance])
+}
+
+model ChapterSentence {
+  id        String @id @default(cuid())
+  chapterId String
+  index     Int
+  text      String
+  tokens    String @default("[]") // JSON Token[]
+  hardScore Float  @default(0)
+  keyVocab  String @default("[]") // JSON string[]
+
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, index])
+}
+
+model UserVocabState {
+  id        String   @id @default(cuid())
+  userId    String
+  lemma     String
+  status    String   @default("uncertain") // unknown | uncertain | learning | known
+  mastery   Float    @default(0.3)
+  source    String   @default("manual") // test | click | exercise | review | manual
+  dueAt     DateTime?
+  ease      Float    @default(2.5)
+  intervalDays Float @default(0)
+  lastSeenAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lemma])
+  @@index([userId, status])
+}
+
+model ChapterProgress {
+  userId         String
+  chapterId      String
+  prepStatus     String   @default("locked") // locked | in_progress | passed | skipped
+  prepScore      Float    @default(0)
+  position       Int      @default(0) // current sentence index
+  lookupCount    Int      @default(0)
+  readingSeconds Int      @default(0)
+  completedAt    DateTime?
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapter        Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@id([userId, chapterId])
+}
+
+model Attempt {
+  id           String   @id @default(cuid())
+  userId       String
+  chapterId    String?
+  lemma        String
+  exerciseType String   @default("recognize") // recognize | cloze | spell | quiz
+  correct      Boolean
+  latencyMs    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, lemma])
+}
+
+model ReviewCard {
+  id           String   @id @default(cuid())
+  userId       String
+  lemma        String
+  definitionZh String   @default("")
+  dueAt        DateTime @default(now())
+  stability    Float    @default(0)
+  difficulty   Float    @default(0.3)
+  lapses       Int      @default(0)
+  reps         Int      @default(0)
+  lastReviewAt DateTime?
+
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lemma])
+  @@index([userId, dueAt])
+}
