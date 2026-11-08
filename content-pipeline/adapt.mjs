@@ -273,8 +273,14 @@ function promptFor(tier, chunkText, hardWords) {
   return `${rules.join("\n")}\n\nPASSAGE:\n${chunkText}`;
 }
 
+// measure() 与 build.mjs 的入库判定在分词/标点/词典覆盖上仍有零点几到一点几的差异：
+// 按自身下限刚好停的书，入库时经常差 0.1~0.3pp。多要 1.2pp 覆盖率，句均生词再紧 15%。
+const HEADROOM = 0.012;
+
 async function rewriteChunk(chunkText, tier, ranker) {
   const t = TIERS[tier];
+  const targetCoverage = t.min + HEADROOM;
+  const targetPerSentence = t.perSentence * 0.85;
   const source = measure(chunkText, ranker, t.rank);
   const seed = source.hard.slice(0, 40).map(([lemma]) => lemma);
   let text = await chat([
@@ -285,7 +291,7 @@ async function rewriteChunk(chunkText, tier, ranker) {
 
   // 最多再改 4 轮：每轮把"上一稿里仍然超纲的词"原样喂回去，要求全部换掉。
   for (let round = 0; round < 4; round += 1) {
-    if (stats.coverage >= t.min && stats.unknownPerSentence <= t.perSentence) break;
+    if (stats.coverage >= targetCoverage && stats.unknownPerSentence <= targetPerSentence) break;
     const hard = stats.hard.slice(0, 40).map(([lemma]) => lemma);
     if (hard.length === 0) break;
     const retry = await chat([
@@ -346,13 +352,16 @@ async function adaptBook(slug, tier, options = {}) {
     const key = String(chapter.index);
     const before = measure(chapter.body, ranker, t.rank);
     const cached = cache.chapters?.[key];
-    if (cached && !options.force) {
+    // --topup 只补跑"缓存里低于本档下限"的章节（拖后腿的那几章），已达标的章节不动，避免整本重烧。
+    const needsTopUp = Boolean(options.topup) && cached && cached.coverageAfter < t.min;
+    if (cached && !options.force && !needsTopUp) {
       results.push({ ...cached, cached: true });
       console.log(`  ${slug} ch${key} 已缓存（覆盖率 ${(cached.coverageAfter * 100).toFixed(1)}%）`);
       continue;
     }
 
-    const paras = paragraphs(chapter.body);
+    const sourceBody = needsTopUp && cached?.text ? cached.text : chapter.body;
+    const paras = paragraphs(sourceBody);
     const chunks = chunkParagraphs(paras, options.chunkWords ?? 1200);
     const rewritten = await mapLimit(chunks, options.concurrency ?? 4, async (chunk) => {
       // 整块没有超出词表的词，就原样保留：省一次调用，也保住原文节奏
@@ -466,6 +475,7 @@ async function main() {
     const results = await adaptBook(slug, tier, {
       chapters: flag("chapters") ? Number(flag("chapters")) : undefined,
       force: has("force"),
+      topup: has("topup"),
       concurrency: Number(flag("concurrency") ?? 4),
       chunkWords: Number(flag("chunk-words") ?? 1200),
     });

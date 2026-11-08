@@ -90,7 +90,7 @@ node content-pipeline/build.mjs                        # 回到默认校准模�
 | 生词本 | ✅ | 按状态筛选（不认识 / 在学 / 已掌握）、掌握度与释义一览 |
 | 主题与视觉 | ✅ | 浅色/深色（跟随系统 + 本地记忆）、生成式书封、骨架屏、自定义 404/错误页 |
 | 登录 | ❌ | M0 固定 demo 用户（`demo@english-reading.local`） |
-| 改写工厂 | ❌ | 未通过准入闸的书只进队列，还没有改写与版本管理 |
+| 改写工厂 | 🟡 | DeepSeek 逐章改写 + 逐章缓存，已出 25 本、19 本过闸上架；剩余队列待余额恢复 |
 
 ### 视觉与交互说明
 
@@ -115,15 +115,18 @@ npm run images -- --chapter <slug> 1 # 单章插图
 
 ## 内容数据现状（实测）
 
-候选 109 本 → 目录命中 109 本 → 可读 27 本（6 推荐 + 21 挑战），其余 82 本进「需改写」队列：
+候选 109 本 → 目录命中 109 本 → 可读 28 本（9 本原文 + 19 本分级改写），21 本进「挑战区」，其余 54 本仍是原文未过闸：
 
 | 分层 | 数量 | 代表 | 四级基准覆盖率 |
 |---|---|---|---|
-| 推荐 | 6 | The Wonderful Wizard of Oz 95.0%、Alice's Adventures in Wonderland 94.5%、The Adventures of Jerry Muskrat 94.8%、The Adventures of Pinocchio 94.4%、Danny Meadow Mouse 94.1%、Old Mother West Wind 94.0% | ≥ 94% |
+| 推荐（原文） | 9 | The Wonderful Wizard of Oz 95.0%、Alice's Adventures in Wonderland 94.5%、The Adventures of Jerry Muskrat 94.8%、The Adventures of Pinocchio 94.4%、Danny Meadow Mouse 94.1%、Old Mother West Wind 94.0% | ≥ 94% |
+| 推荐（改写） | 19 | The Marvelous Land of Oz 94.7%、Reddy Fox 96.0%、Sammy Jay 96.1%、Daisy Miller 96.9%（六级）、Otto of the Silver Hand 97.3%（托福） | 目标档位 |
 | 挑战 | 21 | Memoirs of Sherlock Holmes 93.4%、Black Beauty 93.5%、The Story of Doctor Dolittle 94.0%、Heidi 94.0%、The Story of the Amulet 92.8% | 92.5%~94% |
-| 需改写 | 82 | Pride and Prejudice 92.1%、Jane Eyre 89.5%、Moby-Dick 85.7% | < 92.5% |
+| 需改写 | 54 | Pride and Prejudice 92.1%、Jane Eyre 89.5%、Moby-Dick 85.7% | < 92.5% |
 
-**这组数字本身就是结论**：未改写的公版经典对 4500 词读者普遍落在 85%~95%，只有极少数儿童文学越过 94%。所以书库不是"只有两本"，而是"能直接读的只有六本"——其余 21 本要靠预习兜着读，82 本得先改写。
+改写工厂：`content-pipeline/adapt.mjs` 用 DeepSeek 逐章改写、逐章缓存，`data/adapted/{cet4,cet6,toefl}/` 落稿，`build.mjs` 只接受「全本跑完」的改写稿，并按目标档位复检（四级 94%、六级 96.5%、托福 96%）。已完成 25 本（16 四级 / 5 六级 / 4 托福），19 本过闸上架；剩余队列因 DeepSeek 余额耗尽暂停。
+
+**这组数字本身就是结论**：未改写的公版经典对 4500 词读者普遍落在 85%~95%，只有极少数儿童文学越过 94%。所以书库不是"只有两本"，而是"能直接读的只有九本"——其余 21 本要靠预习兜着读，54 本得先改写。
 
 ## 项目结构
 
