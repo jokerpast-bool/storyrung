@@ -155,6 +155,15 @@ data/dist/              管线产物（books / lemma-index / level-items / gate�
 docs/ARCHITECTURE.md    架构设计
 ```
 
+## 推送（github.com 被 DNS 污染时）
+
+国内网络下 `github.com` 常被解析到 `127.0.0.1`（而 `api.github.com` 正常），本机 Clash 没开时 `git push` 会直接失败。`tools/gh-proxy.mjs` 是一个只做 DoH 解析的本地 CONNECT 代理：
+
+```powershell
+node tools/gh-proxy.mjs                                   # 挂在后台，默认 127.0.0.1:7899
+git -c http.proxy=http://127.0.0.1:7899 push origin main
+```
+
 ## 验证记录
 
 | 项 | 结果 |
