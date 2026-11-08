@@ -313,6 +313,15 @@ function cutFrontMatter(slug, raw) {
   return at > 0 ? raw.slice(at) : raw;
 }
 
+// 没有独立章节标题的书，splitChapters 会把正文第一行当标题（"At the little town of
+// Vevey, in Switzerland, there is a particularly（2）"），读起来像残句。这类改成 Part n。
+function cleanTitle(title, index) {
+  const t = (title || "").replace(/\s+/g, " ").trim();
+  if (!t) return `Part ${index}`;
+  if (t.length > 60 || t.split(/\s+/).length > 10) return `Part ${index}`;
+  return t;
+}
+
 async function adaptBook(slug, tier, options = {}) {
   const t = TIERS[tier];
   const cachePath = join(OUT_DIR, tier, `${slug}.json`);
@@ -377,7 +386,7 @@ async function adaptBook(slug, tier, options = {}) {
 
   // 合并成一本新书：章节标记与 build.mjs 的 splitChapters 对齐
   const body = results
-    .map((r, i) => `CHAPTER ${i + 1}. ${(r.title || `Chapter ${i + 1}`).replace(/\s+/g, " ")}\n\n${r.text}`)
+    .map((r, i) => `CHAPTER ${i + 1}. ${cleanTitle(r.title, i + 1)}\n\n${r.text}`)
     .join("\n\n");
   await writeFile(join(OUT_DIR, tier, `${slug}.txt`), body, "utf8");
   // 元数据：build.mjs 靠 complete 判断"这本是否已全本改写完"，没改完就不能拿去替换原文。
