@@ -300,6 +300,19 @@ async function rewriteChunk(chunkText, tier, ranker) {
   return { text, stats };
 }
 
+// 少数书的前置内容（书名页、目录、序言、学术史）比正文还难，模型改不动也没必要改：
+// 手工标出正文起点，之前的全部丢弃。只影响这里列出的书。
+const FRONT_MATTER_CUT = {
+  "the-fables-of-aesop": "Aesop’s Fables",
+};
+
+function cutFrontMatter(slug, raw) {
+  const marker = FRONT_MATTER_CUT[slug];
+  if (!marker) return raw;
+  const at = raw.indexOf(marker, 5000);
+  return at > 0 ? raw.slice(at) : raw;
+}
+
 async function adaptBook(slug, tier, options = {}) {
   const t = TIERS[tier];
   const cachePath = join(OUT_DIR, tier, `${slug}.json`);
@@ -311,7 +324,7 @@ async function adaptBook(slug, tier, options = {}) {
   }
 
   const raw = await readFile(join(BOOK_DIR, `${slug}.txt`), "utf8");
-  const chapters = expandLongChapters(splitChapters(stripGutenberg(raw)));
+  const chapters = expandLongChapters(splitChapters(stripGutenberg(cutFrontMatter(slug, raw))));
   const limit = options.chapters ?? chapters.length;
   const slice = chapters.slice(0, limit);
 
