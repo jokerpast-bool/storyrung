@@ -52,6 +52,7 @@ interface RawBook {
   coverEmoji: string;
   description: string;
   level: string;
+  adaptedTier?: string;
   license: string;
   sourceUrl: string;
   wordCount: number;
@@ -119,6 +120,7 @@ async function main() {
         title: book.title,
         author: book.author,
         level: book.level,
+        adaptedTier: book.adaptedTier ?? "",
         description: book.description,
         license: book.license,
         sourceUrl: book.sourceUrl,

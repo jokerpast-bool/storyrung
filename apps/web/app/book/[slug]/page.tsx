@@ -45,9 +45,14 @@ export default async function BookPage({ params }: { params: Promise<{ slug: str
           <h1 style={{ fontSize: 32, marginBottom: 6 }}>{book.title}</h1>
           <div className="row">
             <span className="muted">{book.author}</span>
-            <span className={`badge ${book.level === "cet6" ? "warn" : "accent"}`}>
-              {book.level === "cet6" ? "六级" : "四级"}
+            <span className={`badge ${book.level === "cet4" ? "accent" : "warn"}`}>
+              {book.level === "cet4" ? "四级" : book.level === "cet6" ? "六级" : "托福"}
             </span>
+            {book.adaptedTier && (
+              <span className="badge accent">
+                改写版 · {book.adaptedTier === "cet4" ? "四级" : book.adaptedTier === "cet6" ? "六级" : "托福"}
+              </span>
+            )}
             <span className={`badge ${book.admission === "challenge" ? "warn" : "accent"}`}>
               {book.admission === "challenge" ? "挑战区" : "推荐"}
             </span>

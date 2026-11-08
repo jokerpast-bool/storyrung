@@ -8,6 +8,8 @@ import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/use
 
 export const dynamic = "force-dynamic";
 
+const LEVEL_LABEL: Record<string, string> = { cet4: "四级", cet6: "六级", toefl: "托福" };
+
 function pct(value: number) {
   return `${(value * 100).toFixed(2)}%`.replace(/\.?0+%$/, "%");
 }
@@ -43,9 +45,10 @@ function BookTile({
           </div>
         </div>
         <div className="stack" style={{ alignItems: "flex-end", gap: 4 }}>
-          <span className={`badge ${book.level === "cet6" ? "warn" : "accent"}`}>
-            {book.level === "cet6" ? "六级" : "四级"}
+          <span className={`badge ${book.level === "cet4" ? "accent" : "warn"}`}>
+            {LEVEL_LABEL[book.level] ?? "四级"}
           </span>
+          {book.adaptedTier && <span className="badge accent">改写 · {LEVEL_LABEL[book.adaptedTier]}</span>}
           {challenge && <span className="badge warn">挑战</span>}
         </div>
       </div>
@@ -75,7 +78,7 @@ export default async function LibraryPage({
   searchParams: Promise<{ level?: string }>;
 }) {
   const { level } = await searchParams;
-  const levelFilter = level === "cet4" || level === "cet6" ? level : undefined;
+  const levelFilter = level === "cet4" || level === "cet6" || level === "toefl" ? level : undefined;
   const user = await getDemoUser();
   const vocabSize = effectiveVocabSize(user);
   const known = await getKnownSet(user.id, vocabSize);
@@ -94,7 +97,7 @@ export default async function LibraryPage({
         <div>
           <h1 style={{ fontSize: 30 }}>书库</h1>
           <p className="muted small" style={{ margin: 0 }}>
-            {user.level === "unknown" ? "未测评" : user.level === "cet6" ? "六级" : "四级"} · {vocabSize} 词 ·{" "}
+            {user.level === "unknown" ? "未测评" : (LEVEL_LABEL[user.level] ?? "四级")} · {vocabSize} 词 ·{" "}
             <span className="badge">{GATE_LABEL[gate.active]}</span> {pct(thresholds.coverage)} /{" "}
             {thresholds.perSentence}
           </p>
@@ -109,6 +112,7 @@ export default async function LibraryPage({
           { key: "", label: "全部" },
           { key: "cet4", label: "四级" },
           { key: "cet6", label: "六级" },
+          { key: "toefl", label: "托福" },
         ].map((item) => (
           <Link
             key={item.key || "all"}

@@ -11,6 +11,7 @@ export interface GateThreshold {
 export interface GateProfile {
   cet4: GateThreshold;
   cet6: GateThreshold;
+  toefl?: GateThreshold;
   hardFloor: number;
 }
 
@@ -28,6 +29,7 @@ const FALLBACK: GateConfig = {
     strict: {
       cet4: { coverage: 0.97, perSentence: 0.5 },
       cet6: { coverage: 0.98, perSentence: 0.4 },
+      toefl: { coverage: 0.985, perSentence: 0.3 },
       hardFloor: 0.93,
     },
   },
@@ -62,6 +64,7 @@ export function activeProfile(gate: GateConfig): GateProfile {
 
 export function activeThresholds(gate: GateConfig, level?: string | null): GateThreshold {
   const profile = activeProfile(gate);
+  if (level === "toefl" && profile.toefl) return profile.toefl;
   return level === "cet6" ? profile.cet6 : profile.cet4;
 }
 

@@ -10,10 +10,12 @@ import type { AdmissionResult } from "./types";
 export const ADMISSION = {
   cet4: { coverage: 0.94, perSentence: 0.9 },
   cet6: { coverage: 0.965, perSentence: 0.7 },
+  toefl: { coverage: 0.975, perSentence: 0.6 },
   hardFloor: 0.93,
 } as const;
 
 export function admissionFor(level?: string | null) {
+  if (level === "toefl") return ADMISSION.toefl;
   return level === "cet6" ? ADMISSION.cet6 : ADMISSION.cet4;
 }
 

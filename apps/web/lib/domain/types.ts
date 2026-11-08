@@ -1,4 +1,4 @@
-export type Level = "cet4" | "cet6";
+export type Level = "cet4" | "cet6" | "toefl";
 export type VocabStatus = "unknown" | "uncertain" | "learning" | "known";
 export type Band = "cet4" | "cet6" | "beyond";
 

@@ -22,3 +22,4 @@ data/catalog/
 apps/web/public/generated/
 
 .dsh-acl-recovery/
+data/adapted/

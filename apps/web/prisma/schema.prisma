@@ -38,7 +38,9 @@ model Book {
   slug                 String  @unique
   title                String
   author               String
-  level                String // cet4 | cet6
+  level                String // cet4 | cet6 | toefl
+  /// 改写版的目标档位（cet4 | cet6 | toefl）：空字符串表示用的是 Gutenberg 原文
+  adaptedTier          String  @default("")
   description          String  @default("")
   license              String  @default("public-domain")
   sourceUrl            String  @default("")

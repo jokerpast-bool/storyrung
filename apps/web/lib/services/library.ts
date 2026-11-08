@@ -17,6 +17,8 @@ export interface BookCard {
   author: string;
   description: string;
   level: string;
+  /** 改写版目标档位：cet4 | cet6 | toefl，空串表示原文 */
+  adaptedTier: string;
   coverEmoji: string;
   wordCount: number;
   chapterCount: number;
@@ -77,6 +79,7 @@ export async function listLibrary(
       author: book.author,
       description: book.description,
       level: book.level,
+      adaptedTier: book.adaptedTier,
       coverEmoji: book.coverEmoji,
       wordCount: book.wordCount,
       chapterCount: book.chapterCount,
@@ -119,6 +122,7 @@ export async function getBookDetail(
     author: book.author,
     description: book.description,
     level: book.level,
+    adaptedTier: book.adaptedTier,
     coverEmoji: book.coverEmoji,
     wordCount: book.wordCount,
     chapterCount: book.chapterCount,

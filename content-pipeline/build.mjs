@@ -12,7 +12,7 @@
  *   3) 专有名词（人名/地名）不进 lemmaCounts —— 名字不是词汇负担，否则覆盖率会失真。
  *   4) 准入闸离线判定；阈值由实测数据校准（见 ADMISSION 注释），不是拍脑袋。
  */
-import { mkdir, readFile, writeFile, stat } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile, stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { join } from "node:path";
 import { parse as parseCsv } from "csv-parse";
@@ -35,11 +35,13 @@ const GATE_PROFILES = {
   calibrated: {
     cet4: { coverage: 0.94, perSentence: 0.9 },
     cet6: { coverage: 0.965, perSentence: 0.7 },
+    toefl: { coverage: 0.975, perSentence: 0.6 },
     hardFloor: 0.93,
   },
   strict: {
     cet4: { coverage: 0.97, perSentence: 0.5 },
     cet6: { coverage: 0.98, perSentence: 0.4 },
+    toefl: { coverage: 0.985, perSentence: 0.3 },
     hardFloor: 0.93,
   },
 };
@@ -59,7 +61,34 @@ const CHALLENGE = {
 };
 const HAS_CHALLENGE = ACTIVE_GATE === "calibrated";
 
-const LEVEL_VOCAB = { cet4: 4500, cet6: 6000 };
+const LEVEL_VOCAB = { cet4: 4500, cet6: 6000, toefl: 8000 };
+
+/** 改写版：adapt.mjs 产出的 data/adapted/{tier}/{slug}.txt，存在则优先于原始 Gutenberg 文本。 */
+async function loadAdaptations() {
+  const map = new Map();
+  for (const tier of Object.keys(LEVEL_VOCAB)) {
+    const dir = join(ROOT, "data", "adapted", tier);
+    let names = [];
+    try {
+      names = await readdir(dir);
+    } catch {
+      continue;
+    }
+    for (const name of names) {
+      if (!name.endsWith(".txt")) continue;
+      const slug = name.slice(0, -4);
+      let complete = true;
+      try {
+        const meta = JSON.parse(await readFile(join(dir, `${slug}.meta.json`), "utf8"));
+        complete = meta.complete !== false;
+      } catch {
+        // 早期产物没有 meta：交给下面的章节数校验兜底
+      }
+      map.set(slug, { tier, text: await readFile(join(dir, name), "utf8"), complete });
+    }
+  }
+  return map;
+}
 
 /** 书籍清单来自 select.mjs 的产物（书名在 Gutenberg 目录里解析成 ID），管线本身不写死书单。 */
 async function loadBooks() {
@@ -332,10 +361,27 @@ async function main() {
   const parsed = [];
   const neededWords = new Set();
 
+  const ADAPTED = await loadAdaptations();
+  console.log(`· 改写版 ${ADAPTED.size} 本（data/adapted）`);
+
   for (const book of BOOKS) {
+    const adapted = ADAPTED.get(book.slug) ?? null;
     const path = await ensureBook(book);
-    const raw = await readFile(path, "utf8");
-    const text = stripGutenberg(raw);
+    const original = stripGutenberg(await readFile(path, "utf8"));
+    // 只改了一半的书不能当改写版用：否则正文会"少掉后半本"，而且覆盖率会被那半本拉高。
+    // 条件很朴素——改写稿的章数必须覆盖原文全部章节。
+    let text = original;
+    let adaptedTier = null;
+    if (adapted) {
+      const adaptedChapters = splitChapters(adapted.text).length;
+      const originalChapters = splitChapters(original).length;
+      if (adapted.complete && adaptedChapters >= originalChapters) {
+        text = adapted.text;
+        adaptedTier = adapted.tier;
+      } else {
+        console.log(`  ${book.slug}: 改写不完整（${adaptedChapters}/${originalChapters} 章），本次仍用原文`);
+      }
+    }
     const chapters = expandLongChapters(splitChapters(text)).map((chapter) => {
       const sentences = [];
       for (const para of paragraphs(chapter.body)) {
@@ -354,7 +400,7 @@ async function main() {
       }
       return { index: chapter.index, title: chapter.title, sentences };
     });
-    parsed.push({ book, chapters });
+    parsed.push({ book, chapters, adaptedTier });
   }
 
   const resolveLemma = (surface) => {
@@ -399,7 +445,7 @@ async function main() {
   const outBooks = [];
   const levelItems = [];
 
-  for (const { book, chapters } of parsed) {
+  for (const { book, chapters, adaptedTier } of parsed) {
     // 专有名词必须按"这本书"判定：如果跨全部语料判定，后面加一本书就会改变前面某本书的历史覆盖率
     // （实测踩过：书单从 3 本扩到 57 本时，Oz 的覆盖率从 94.9% 变成 93.7%，判定结果跟着翻转）。
     const capStats = new Map();
@@ -425,6 +471,9 @@ async function main() {
     let bookWords = 0;
     const chapterCoverages = [];
     const chapterCoverages6 = [];
+    // 改写版按目标档位验收：托福档用 8000 词表算，免得把"改写后"的书又按四级标准重判一遍。
+    const tierVocab = adaptedTier ? LEVEL_VOCAB[adaptedTier] : LEVEL_VOCAB.cet4;
+    const chapterCoveragesTier = [];
     const outChapters = [];
 
     for (const chapter of chapters) {
@@ -527,8 +576,10 @@ async function main() {
       }
 
       const cov = coverageOf(counts, rankOf, LEVEL_VOCAB.cet4);
+      const covTier = coverageOf(counts, rankOf, tierVocab);
       chapterCoverages.push(cov);
       chapterCoverages6.push(coverageOf(counts, rankOf, LEVEL_VOCAB.cet6));
+      chapterCoveragesTier.push(covTier);
       for (const [l, n] of Object.entries(counts)) bookCounts[l] = (bookCounts[l] ?? 0) + n;
       bookSentences += sentenceCount;
       bookWords += wordCount;
@@ -539,7 +590,7 @@ async function main() {
         wordCount,
         sentenceCount,
         hardSentences,
-        difficulty: Math.round((1 - cov) * 100) / 100,
+        difficulty: Math.round((1 - (adaptedTier ? covTier : cov)) * 100) / 100,
         estMinutes: Math.max(1, Math.round(wordCount / 120)),
         lemmaCounts: counts,
         vocab: vocab.filter((v) => v.freqRank > 300),
@@ -549,10 +600,16 @@ async function main() {
 
     const gate4 = evaluateGate(bookCounts, rankOf, LEVEL_VOCAB.cet4, bookSentences, ADMISSION.cet4);
     const gate6 = evaluateGate(bookCounts, rankOf, LEVEL_VOCAB.cet6, bookSentences, ADMISSION.cet6);
+    const gateTier = adaptedTier
+      ? evaluateGate(bookCounts, rankOf, tierVocab, bookSentences, ADMISSION[adaptedTier])
+      : null;
     const chapterPassRate4 =
       chapterCoverages.filter((c) => c >= ADMISSION.hardFloor).length / Math.max(1, chapterCoverages.length);
     const chapterPassRate6 =
       chapterCoverages6.filter((c) => c >= ADMISSION.hardFloor).length / Math.max(1, chapterCoverages6.length);
+    const chapterPassRateTier =
+      chapterCoveragesTier.filter((c) => c >= ADMISSION.hardFloor).length /
+      Math.max(1, chapterCoveragesTier.length);
 
     let level;
     let admission;
@@ -561,7 +618,13 @@ async function main() {
     const challenge4 = evaluateGate(bookCounts, rankOf, LEVEL_VOCAB.cet4, bookSentences, CHALLENGE.cet4);
     const challenge6 = evaluateGate(bookCounts, rankOf, LEVEL_VOCAB.cet6, bookSentences, CHALLENGE.cet6);
 
-    if (gate4.pass && chapterPassRate4 >= 0.8) {
+    if (adaptedTier) {
+      // 改写版只看自己的目标档位：写好了就该按目标档位收，而不是再拿四级/六级卡一遍。
+      level = adaptedTier;
+      gate = gateTier;
+      chapterPassRate = chapterPassRateTier;
+      admission = gateTier.pass && chapterPassRateTier >= 0.8 ? "pass" : "fail";
+    } else if (gate4.pass && chapterPassRate4 >= 0.8) {
       level = "cet4";
       admission = "pass";
       gate = gate4;
@@ -593,10 +656,18 @@ async function main() {
       );
     }
     if (admission === "fail") {
-      reasons.unshift(
-        `四级基准 ${(gate4.coverage * 100).toFixed(1)}%（需 ${(ADMISSION.cet4.coverage * 100).toFixed(1)}%），` +
-          `六级基准 ${(gate6.coverage * 100).toFixed(1)}%（需 ${(ADMISSION.cet6.coverage * 100).toFixed(1)}%）`,
-      );
+      if (adaptedTier) {
+        reasons.unshift(
+          `改写版（${adaptedTier}）覆盖率 ${(gateTier.coverage * 100).toFixed(1)}%` +
+            `（需 ${(ADMISSION[adaptedTier].coverage * 100).toFixed(1)}%），` +
+            `句均生词 ${gateTier.unknownPerSentence.toFixed(2)}（需 ${ADMISSION[adaptedTier].perSentence}）`,
+        );
+      } else {
+        reasons.unshift(
+          `四级基准 ${(gate4.coverage * 100).toFixed(1)}%（需 ${(ADMISSION.cet4.coverage * 100).toFixed(1)}%），` +
+            `六级基准 ${(gate6.coverage * 100).toFixed(1)}%（需 ${(ADMISSION.cet6.coverage * 100).toFixed(1)}%）`,
+        );
+      }
     }
 
     outBooks.push({
@@ -613,6 +684,7 @@ async function main() {
       tokenCount: Object.values(bookCounts).reduce((a, b) => a + b, 0),
       difficulty: Math.round((1 - gate.coverage) * 100) / 100,
       admission,
+      adaptedTier,
       gateCoverage: Number(gate.coverage.toFixed(4)),
       gateUnknownPerSentence: Number(gate.unknownPerSentence.toFixed(3)),
       gateReason:
