@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 
 import { submitLevelTest } from "@/app/actions";
+import type { Level } from "@/lib/domain/types";
 
 interface TestOption {
   id: string;
@@ -30,7 +31,7 @@ interface BandRow {
 
 interface Result {
   vocabSize: number;
-  level: "cet4" | "cet6";
+  level: Level;
   confidence: number;
   correctCount: number;
   total: number;

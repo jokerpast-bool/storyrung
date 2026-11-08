@@ -1,9 +1,9 @@
 import type { Level } from "./types";
 
-/** 目标词汇量：四级 4500、六级 6000（大纲口径，可配置）。 */
-export const LEVEL_VOCAB: Record<Level, number> = { cet4: 4500, cet6: 6000 };
+/** 目标词汇量：四级 4500、六级 6000、托福 8000（大纲口径，可配置）。 */
+export const LEVEL_VOCAB: Record<Level, number> = { cet4: 4500, cet6: 6000, toefl: 8000 };
 
-/** 词汇量 → 等级。4500 是分界线，低于它走四级线。 */
+/** 词汇量 → 等级。4500 是分界线，低于它走四级线；测评只区分四级/六级（托福是书库档位，不靠测评判定）。 */
 export function levelFromVocab(vocabSize: number): Level {
   return vocabSize >= LEVEL_VOCAB.cet4 ? "cet6" : "cet4";
 }

@@ -14,6 +14,7 @@ import {
 } from "@/lib/domain/level";
 import { PREP_LIMITS } from "@/lib/domain/prep";
 import type { Grade } from "@/lib/domain/srs";
+import type { Level } from "@/lib/domain/types";
 import { gradeLevelTest } from "@/lib/services/level-test";
 import { applyAttempt } from "@/lib/services/prep-session";
 import { applyGrade } from "@/lib/services/review";
@@ -22,7 +23,7 @@ import { lookupLemma } from "@/lib/services/chapter";
 
 export interface LevelTestResult {
   vocabSize: number;
-  level: "cet4" | "cet6";
+  level: Level;
   confidence: number;
   correctCount: number;
   total: number;
