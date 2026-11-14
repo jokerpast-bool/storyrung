@@ -11,6 +11,14 @@
 
 > 仓库里只有代码（约 350 KB）：书籍原文、Gutenberg 目录、管线产物和 SQLite 库都在 `.gitignore` 里，首次运行按「快速开始」跑一遍管线即可重建。
 
+## 界面
+
+首页：大字标 + 细线 + 线描书，下面是书架三本和无框统计条。
+
+![首页（桌面）](docs/screenshots/home-desktop.png)
+
+![首页（移动端）](docs/screenshots/home-mobile.png)
+
 ## 快速开始
 
 ```bash
