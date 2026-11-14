@@ -160,20 +160,20 @@ body {
   justify-self: end;
   width: 100%;
   max-width: 460px;
-  color: #bcae98;
+  color: #8c7f6a;
 }
 
-.hero-art-svg {
-  display: block;
+[data-theme="dark"] .home-art {
+  color: #857a67;
+}
+
+.hero-art-frame {
   width: 100%;
-  height: auto;
-}
-
-.hero-art-letters text {
-  font-family: var(--serif);
-  font-style: italic;
-  fill: currentColor;
-  opacity: 0.75;
+  aspect-ratio: 1000 / 884;
+  background-color: currentColor;
+  -webkit-mask: url("/hero-book.png") center / contain no-repeat;
+  mask: url("/hero-book.png") center / contain no-repeat;
+  opacity: 0.92;
 }
 
 /* ---------- 书架 ---------- */
