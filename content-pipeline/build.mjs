@@ -16,6 +16,7 @@ import { mkdir, readFile, readdir, writeFile, stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { join } from "node:path";
 import { parse as parseCsv } from "csv-parse";
+import { writeLevelItems } from "./level-items.mjs";
 
 const ROOT = process.cwd();
 const BOOK_DIR = join(ROOT, "data", "books");
@@ -453,7 +454,6 @@ async function main() {
 
   const lemmaIndex = new Map();
   const outBooks = [];
-  const levelItems = [];
 
   for (const { book, chapters, adaptedTier } of parsed) {
     // 专有名词必须按"这本书"判定：如果跨全部语料判定，后面加一本书就会改变前面某本书的历史覆盖率
@@ -733,43 +733,12 @@ async function main() {
     );
   }
 
-  const buckets = [
-    { band: 1, from: 1, to: 2000 },
-    { band: 2, from: 2001, to: 3000 },
-    { band: 3, from: 3001, to: 4500 },
-    { band: 4, from: 4501, to: 6000 },
-    { band: 5, from: 6001, to: 8000 },
-    { band: 6, from: 8001, to: 12000 },
-  ];
-  const indexRows = [...lemmaIndex.values()].sort((a, b) => a.freqRank - b.freqRank);
-  for (const bucket of buckets) {
-    const pool = indexRows.filter(
-      (row) =>
-        row.freqRank >= bucket.from &&
-        row.freqRank <= bucket.to &&
-        row.definitionZh.length >= 2 &&
-        row.definitionZh.length <= 40 &&
-        /^[a-z][a-z'-]+$/.test(row.lemma) &&
-        row.lemma.length > 2,
-    );
-    if (pool.length === 0) continue;
-    const step = Math.max(1, Math.floor(pool.length / 8));
-    for (let i = 0, picked = 0; i < pool.length && picked < 8; i += step, picked += 1) {
-      const row = pool[i];
-      levelItems.push({
-        lemma: row.lemma,
-        band: bucket.band,
-        definitionZh: row.definitionZh.split(/[；;]/)[0].trim(),
-        pos: row.pos,
-        freqRank: row.freqRank,
-      });
-    }
-  }
+  // 测评题库独立生成：按频段从 ECDICT 取词，逻辑见 content-pipeline/level-items.mjs
+  const levelItems = await writeLevelItems(join(DIST_DIR, "level-items.json"));
 
   await mkdir(DIST_DIR, { recursive: true });
   await writeFile(join(DIST_DIR, "books.json"), JSON.stringify(outBooks));
   await writeFile(join(DIST_DIR, "lemma-index.json"), JSON.stringify([...lemmaIndex.values()]));
-  await writeFile(join(DIST_DIR, "level-items.json"), JSON.stringify(levelItems));
   await writeFile(
     join(DIST_DIR, "gate.json"),
     JSON.stringify({

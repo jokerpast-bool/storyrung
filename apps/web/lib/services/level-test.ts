@@ -50,17 +50,20 @@ function shuffleSeeded<T>(items: T[], seed: number): T[] {
 const OPTION_IDS = ["a", "b", "c", "d"];
 
 /**
- * 生成一次「看词选义」测试：每个频段抽 4 个词，共 24 题。
- * 干扰项来自同题池的其他词释义；选项顺序由题目 id 决定，刷新不变。
+ * 生成一次「看词选义」测试：每个频段随机抽 4 个词，共 24 题。
+ * 题库每段 40 个（共 240），每次随机取，反复测不会撞同一份卷子；
+ * 单题内部选项顺序仍由题目 id 决定，刷新不跳。
  */
 export async function buildLevelTest(perBand = 4): Promise<TestItem[]> {
   const all = await prisma.levelItem.findMany({ orderBy: [{ band: "asc" }, { freqRank: "asc" }] });
   if (all.length === 0) return [];
 
+  const roundSalt = crypto.randomUUID();
   const picked: typeof all = [];
   for (const bucket of BUCKETS) {
     const pool = all.filter((item) => item.band === bucket.band);
-    picked.push(...shuffleSeeded(pool, hashString(`pick-${bucket.band}`)).slice(0, perBand));
+    const seed = hashString(`pick-${bucket.band}-${roundSalt}`);
+    picked.push(...shuffleSeeded(pool, seed).slice(0, perBand));
   }
 
   const glosses = [...new Set(all.map((item) => shortGloss(item.definitionZh)).filter((g) => g.length > 1))];
