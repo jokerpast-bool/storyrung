@@ -9,6 +9,19 @@
 
 当前是可运行的纵向切片（M0），不是完整产品。
 
+仓库：<https://github.com/jokerpast-bool/storyrung>　·　本地跑起来：
+
+```bash
+git clone https://github.com/jokerpast-bool/storyrung.git
+cd storyrung
+npm ci --ignore-scripts
+npm run db:generate --workspace @er/web
+npm run pipeline        # 下载书目 → 清洗分章 → 算覆盖率与准入闸（约 3–5 分钟）
+npm run db:push
+npm run db:seed
+npm run dev             # http://127.0.0.1:3100
+```
+
 > 仓库里只有代码（约 350 KB）：书籍原文、Gutenberg 目录、管线产物和 SQLite 库都在 `.gitignore` 里，首次运行按「快速开始」跑一遍管线即可重建。
 
 ## 界面
