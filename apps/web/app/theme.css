@@ -159,8 +159,8 @@ body {
 .home-art {
   justify-self: end;
   width: 100%;
-  max-width: 400px;
-  color: #c3b7a4;
+  max-width: 460px;
+  color: #bcae98;
 }
 
 .hero-art-svg {
@@ -613,8 +613,8 @@ body {
     font-size: 22px;
   }
   .home-art {
-    max-width: 220px;
-    opacity: 0.7;
+    max-width: 260px;
+    opacity: 0.85;
   }
   .shelf-grid {
     grid-template-columns: 1fr;
