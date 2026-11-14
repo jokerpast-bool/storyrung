@@ -12,7 +12,7 @@ import {
   levelFromVocab,
   type BandAccuracy,
 } from "@/lib/domain/level";
-import { PREP_LIMITS } from "@/lib/domain/prep";
+import { PREP_LIMITS, shortGloss } from "@/lib/domain/prep";
 import type { Grade } from "@/lib/domain/srs";
 import type { Level } from "@/lib/domain/types";
 import { gradeLevelTest } from "@/lib/services/level-test";
@@ -28,6 +28,20 @@ export interface LevelTestResult {
   correctCount: number;
   total: number;
   bands: ReturnType<typeof bandSummary>;
+}
+
+/**
+ * 选完之后立刻给出正确答案（高亮正确释义、错的选项标红），
+ * 停留 ~0.7s 再进入下一题。答案由服务端算，首屏 HTML 里不含正确答案。
+ */
+export async function revealLevelAnswer(
+  itemId: string,
+  chosen: string,
+): Promise<{ correctText: string; isCorrect: boolean } | null> {
+  const item = await prisma.levelItem.findUnique({ where: { id: itemId } });
+  if (!item) return null;
+  const correctText = shortGloss(item.definitionZh);
+  return { correctText, isCorrect: chosen === correctText };
 }
 
 /**

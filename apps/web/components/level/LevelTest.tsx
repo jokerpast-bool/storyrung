@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 
 import { submitLevelTest } from "@/app/actions";
+import { revealLevelAnswer } from "@/app/actions";
 import type { Level } from "@/lib/domain/types";
 
 interface TestOption {
@@ -46,13 +47,15 @@ export default function LevelTest({ items }: { items: Item[] }) {
   const [answers, setAnswers] = useState<{ itemId: string; chosen: string }[]>([]);
   const [result, setResult] = useState<Result | null>(null);
   const [pending, startTransition] = useTransition();
+  const [reveal, setReveal] = useState<{ chosen: string; correct: string } | null>(null);
+  const [checking, setChecking] = useState(false);
 
   const item = items[cursor];
 
-  function answer(chosen: string) {
-    if (pending) return;
+  function advance(chosen: string) {
     const next = [...answers, { itemId: item.id, chosen }];
     setAnswers(next);
+    setReveal(null);
     if (cursor + 1 >= items.length) {
       startTransition(async () => {
         const outcome = await submitLevelTest(next);
@@ -62,6 +65,20 @@ export default function LevelTest({ items }: { items: Item[] }) {
     } else {
       setCursor((c) => c + 1);
     }
+  }
+
+  async function answer(chosen: string) {
+    if (checking || reveal || pending) return;
+    setChecking(true);
+    const info = await revealLevelAnswer(item.id, chosen);
+    setChecking(false);
+    if (!info) {
+      advance(chosen);
+      return;
+    }
+    // 高亮正确答案，停一下让眼睛扫到，再进下一题
+    setReveal({ chosen, correct: info.correctText });
+    window.setTimeout(() => advance(chosen), 900);
   }
 
   if (stage === "intro") {
@@ -168,27 +185,31 @@ export default function LevelTest({ items }: { items: Item[] }) {
       </div>
 
       <div className="options">
-        {item.options.map((option, index) => (
-          <button
-            key={option.id}
-            type="button"
-            className="option"
-            disabled={pending}
-            onClick={() => answer(option.text)}
-          >
-            <span className="muted" style={{ marginRight: 8 }}>
-              {LETTERS[index]}
-            </span>
-            {option.text}
-          </button>
-        ))}
+        {item.options.map((option, index) => {
+          const isCorrect = reveal?.correct === option.text;
+          const isWrong = Boolean(reveal) && reveal!.chosen === option.text && reveal!.correct !== option.text;
+          return (
+            <button
+              key={option.id}
+              type="button"
+              className={`option${isCorrect ? " correct" : ""}${isWrong ? " wrong" : ""}`}
+              disabled={checking || reveal !== null || pending}
+              onClick={() => answer(option.text)}
+            >
+              <span className="muted" style={{ marginRight: 8 }}>
+                {LETTERS[index]}
+              </span>
+              {option.text}
+            </button>
+          );
+        })}
       </div>
 
       <button
         type="button"
         className="btn ghost"
         style={{ marginTop: "auto", alignSelf: "flex-start" }}
-        disabled={pending}
+        disabled={checking || reveal !== null || pending}
         onClick={() => answer("__dont_know__")}
       >
         不认识，跳过
