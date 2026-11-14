@@ -7,7 +7,6 @@ import { prisma } from "@/lib/db";
 import {
   BUCKETS,
   bandSummary,
-  estimateConfidence,
   estimateVocabSize,
   levelFromVocab,
   type BandAccuracy,
@@ -15,7 +14,7 @@ import {
 import { PREP_LIMITS, shortGloss } from "@/lib/domain/prep";
 import type { Grade } from "@/lib/domain/srs";
 import type { Level } from "@/lib/domain/types";
-import { gradeLevelTest } from "@/lib/services/level-test";
+import { buildLevelTest, gradeLevelTest, type TestItem } from "@/lib/services/level-test";
 import { applyAttempt } from "@/lib/services/prep-session";
 import { applyGrade } from "@/lib/services/review";
 import { getDemoUser, getVocabStates } from "@/lib/services/user";
@@ -24,10 +23,42 @@ import { lookupLemma } from "@/lib/services/chapter";
 export interface LevelTestResult {
   vocabSize: number;
   level: Level;
-  confidence: number;
   correctCount: number;
   total: number;
   bands: ReturnType<typeof bandSummary>;
+}
+
+type LevelAnswers = { itemId: string; chosen: string }[];
+
+/** 只算分、不落库：答题中途的进度提示与「继续答题」前的预估都用它。 */
+async function summarizeLevelAnswers(answers: LevelAnswers): Promise<LevelTestResult> {
+  const graded = await gradeLevelTest(answers);
+  const bands: BandAccuracy[] = BUCKETS.map((bucket) => ({ band: bucket.band, total: 0, correct: 0 }));
+  for (const row of graded) {
+    const band = bands.find((b) => b.band === row.item.band);
+    if (!band) continue;
+    band.total += 1;
+    if (row.correct) band.correct += 1;
+  }
+
+  const vocabSize = estimateVocabSize(bands);
+  return {
+    vocabSize,
+    level: levelFromVocab(vocabSize),
+    correctCount: graded.filter((row) => row.correct).length,
+    total: graded.length,
+    bands: bandSummary(bands),
+  };
+}
+
+/** 实时的分数预估（不写库）。 */
+export async function gradeLevelAnswers(answers: LevelAnswers): Promise<LevelTestResult> {
+  return summarizeLevelAnswers(answers);
+}
+
+/** 继续多答几题：按每段 perBand 个追加，跳过已答过的题；题库用完时返回空数组。 */
+export async function moreLevelItems(excludeIds: string[], perBand = 2): Promise<TestItem[]> {
+  return buildLevelTest(perBand, excludeIds);
 }
 
 /**
@@ -46,30 +77,16 @@ export async function revealLevelAnswer(
 
 /**
  * 词汇量测评提交：四选一判分 → 扣掉猜对率估词汇量 → 定级 → 答错的词落成 unknown。
- * 返回结果给客户端渲染结果页（不跳转，避免状态丢失）。
+ * 用户可以在满 24 题后继续加答，这里按"到目前为止的全部作答"重新计分。
  */
-export async function submitLevelTest(
-  answers: { itemId: string; chosen: string }[],
-): Promise<LevelTestResult> {
+export async function submitLevelTest(answers: LevelAnswers): Promise<LevelTestResult> {
   const user = await getDemoUser();
   const graded = await gradeLevelTest(answers);
-
-  const bands: BandAccuracy[] = BUCKETS.map((bucket) => ({ band: bucket.band, total: 0, correct: 0 }));
-  for (const row of graded) {
-    const band = bands.find((b) => b.band === row.item.band);
-    if (!band) continue;
-    band.total += 1;
-    if (row.correct) band.correct += 1;
-  }
-
-  const vocabSize = estimateVocabSize(bands);
-  const confidence = estimateConfidence(bands);
-  const level = levelFromVocab(vocabSize);
-  const correctCount = graded.filter((row) => row.correct).length;
+  const summary = await summarizeLevelAnswers(answers);
 
   await prisma.user.update({
     where: { id: user.id },
-    data: { vocabSize, level, levelConfidence: confidence },
+    data: { vocabSize: summary.vocabSize, level: summary.level },
   });
 
   // 答错的词直接落 unknown：进书库后这些词会更早出现在预习包里
@@ -91,14 +108,7 @@ export async function submitLevelTest(
   revalidatePath("/library");
   revalidatePath("/level-test");
 
-  return {
-    vocabSize,
-    level,
-    confidence,
-    correctCount,
-    total: graded.length,
-    bands: bandSummary(bands),
-  };
+  return summary;
 }
 
 export interface AttemptResult {

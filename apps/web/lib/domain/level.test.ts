@@ -6,7 +6,6 @@ import {
   GUESS_RATE,
   bandCorrectedRate,
   bandSummary,
-  estimateConfidence,
   estimateVocabSize,
   levelFromVocab,
   type BandAccuracy,
@@ -54,14 +53,6 @@ test("分段覆盖不足时只按有数据的段加权", () => {
 test("词汇量 4500 是四级/六级分界线", () => {
   assert.equal(levelFromVocab(4499), "cet4");
   assert.equal(levelFromVocab(4500), "cet6");
-});
-
-test("极端作答（全对/全错）置信度低于有起伏的作答", () => {
-  const allCorrect = estimateConfidence(bands([4, 4, 4, 4, 4, 4]));
-  const mixed = estimateConfidence(bands([3, 2, 2, 2, 1, 1]));
-  assert.ok(allCorrect < mixed, `expected ${allCorrect} < ${mixed}`);
-  assert.equal(estimateConfidence([]), 0);
-  assert.equal(estimateConfidence(bands([0, 0, 0, 0, 0, 0])), allCorrect);
 });
 
 test("bandSummary 输出结果页要画的六行", () => {

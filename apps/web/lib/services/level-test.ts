@@ -50,18 +50,20 @@ function shuffleSeeded<T>(items: T[], seed: number): T[] {
 const OPTION_IDS = ["a", "b", "c", "d"];
 
 /**
- * 生成一次「看词选义」测试：每个频段随机抽 4 个词，共 24 题。
- * 题库每段 40 个（共 240），每次随机取，反复测不会撞同一份卷子；
+ * 生成一次「看词选义」测试：每个频段随机抽 perBand 个词。
+ * 初始一场 perBand=4（24 题）；用户想更准时再按 perBand=2 追加（每轮 12 题），
+ * excludeIds 用于跳过已经答过的题。
  * 单题内部选项顺序仍由题目 id 决定，刷新不跳。
  */
-export async function buildLevelTest(perBand = 4): Promise<TestItem[]> {
+export async function buildLevelTest(perBand = 4, excludeIds: string[] = []): Promise<TestItem[]> {
+  const skip = new Set(excludeIds);
   const all = await prisma.levelItem.findMany({ orderBy: [{ band: "asc" }, { freqRank: "asc" }] });
   if (all.length === 0) return [];
 
   const roundSalt = crypto.randomUUID();
   const picked: typeof all = [];
   for (const bucket of BUCKETS) {
-    const pool = all.filter((item) => item.band === bucket.band);
+    const pool = all.filter((item) => item.band === bucket.band && !skip.has(item.id));
     const seed = hashString(`pick-${bucket.band}-${roundSalt}`);
     picked.push(...shuffleSeeded(pool, seed).slice(0, perBand));
   }

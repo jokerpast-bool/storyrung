@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 
-import { submitLevelTest } from "@/app/actions";
-import { revealLevelAnswer } from "@/app/actions";
+import { gradeLevelAnswers, moreLevelItems, revealLevelAnswer, submitLevelTest } from "@/app/actions";
 import type { Level } from "@/lib/domain/types";
 
 interface TestOption {
@@ -33,19 +32,47 @@ interface BandRow {
 interface Result {
   vocabSize: number;
   level: Level;
-  confidence: number;
   correctCount: number;
   total: number;
   bands: BandRow[];
 }
 
 const LETTERS = ["A", "B", "C", "D"];
+const INITIAL_SIZE = 24;
+const EXTRA_PER_ROUND = 2; // 每段追加 2 个 → 一轮 12 题
 
-export default function LevelTest({ items }: { items: Item[] }) {
-  const [stage, setStage] = useState<"intro" | "quiz" | "result">("intro");
+function BandList({ bands }: { bands: BandRow[] }) {
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <div className="quiz-sub">分段正确率</div>
+      {bands.map((band) => {
+        const corrected = band.total > 0 ? Math.max(0, (band.rate - 0.25) / 0.75) : 0;
+        return (
+          <div key={band.band}>
+            <div className="kv" style={{ padding: "2px 0" }}>
+              <span className="tiny">{band.label}</span>
+              <b className="tiny">
+                {band.correct}/{band.total}
+              </b>
+            </div>
+            <div className="meter" style={{ height: 5 }}>
+              <i style={{ width: `${Math.max(2, Math.round(corrected * 100))}%` }} />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function LevelTest({ items: initialItems }: { items: Item[] }) {
+  const [stage, setStage] = useState<"intro" | "quiz" | "checkpoint" | "result">("intro");
+  const [items, setItems] = useState<Item[]>(initialItems);
   const [cursor, setCursor] = useState(0);
   const [answers, setAnswers] = useState<{ itemId: string; chosen: string }[]>([]);
+  const [preview, setPreview] = useState<Result | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [reveal, setReveal] = useState<{ chosen: string; correct: string } | null>(null);
   const [checking, setChecking] = useState(false);
@@ -53,14 +80,16 @@ export default function LevelTest({ items }: { items: Item[] }) {
   const item = items[cursor];
 
   function advance(chosen: string) {
+    // 最后一道题提交后要等服务端统计，这段时间题面还在，防重复记录同一条作答
+    if (answers.some((row) => row.itemId === item.id)) return;
     const next = [...answers, { itemId: item.id, chosen }];
     setAnswers(next);
     setReveal(null);
     if (cursor + 1 >= items.length) {
       startTransition(async () => {
-        const outcome = await submitLevelTest(next);
-        setResult(outcome);
-        setStage("result");
+        const snapshot = await gradeLevelAnswers(next);
+        setPreview(snapshot);
+        setStage("checkpoint");
       });
     } else {
       setCursor((c) => c + 1);
@@ -81,12 +110,52 @@ export default function LevelTest({ items }: { items: Item[] }) {
     window.setTimeout(() => advance(chosen), 900);
   }
 
+  function loadMore() {
+    startTransition(async () => {
+      const more = await moreLevelItems(
+        answers.map((row) => row.itemId),
+        EXTRA_PER_ROUND,
+      );
+      if (!more.length) {
+        setNotice("题库已经答完了，这一份结果就是最终结果。");
+        setStage("checkpoint");
+        return;
+      }
+      setNotice(null);
+      // cursor 还停在上一题（已答过），追加题目后要跳到第一道新题
+      setItems((prev) => [...prev, ...more]);
+      setCursor(items.length);
+      setStage("quiz");
+    });
+  }
+
+  function finish() {
+    startTransition(async () => {
+      const outcome = await submitLevelTest(answers);
+      setResult(outcome);
+      setStage("result");
+    });
+  }
+
+  function restart() {
+    setStage("intro");
+    setItems(initialItems);
+    setCursor(0);
+    setAnswers([]);
+    setPreview(null);
+    setResult(null);
+    setNotice(null);
+  }
+
   if (stage === "intro") {
     return (
       <div className="quiz-card">
         <h2 style={{ marginBottom: 4 }}>词汇量测评</h2>
         <p className="muted small" style={{ marginTop: 0 }}>
-          看词选义 · {items.length} 题
+          看词选义 · 先答 {Math.min(INITIAL_SIZE, items.length)} 题
+        </p>
+        <p className="muted small" style={{ marginTop: 0 }}>
+          答完还可以继续加答，答得越多，估得越准。
         </p>
         <div className="row" style={{ marginTop: "auto" }}>
           <button type="button" className="btn primary" onClick={() => setStage("quiz")}>
@@ -95,6 +164,44 @@ export default function LevelTest({ items }: { items: Item[] }) {
           <Link href="/library" className="btn ghost">
             跳过，直接去书库
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "checkpoint" && preview) {
+    return (
+      <div className="quiz-card">
+        <div>
+          <div className="quiz-sub">已答 {preview.total} 题，当前估计</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+            <span style={{ fontSize: 52, fontFamily: "var(--serif)", fontWeight: 600 }}>
+              {preview.vocabSize.toLocaleString()}
+            </span>
+            <span className="muted">词</span>
+          </div>
+          <div className="row" style={{ gap: 8, marginTop: 6 }}>
+            <span className={`badge ${preview.level === "cet6" ? "warn" : "accent"}`}>
+              {preview.level === "cet6" ? "六级" : "四级"}
+            </span>
+            <span className="badge">
+              答对 {preview.correctCount} / {preview.total}
+            </span>
+          </div>
+          <p className="muted small" style={{ marginTop: 14 }}>
+            {notice ?? "每段再多答 2 题，估计会更稳一些。"}
+          </p>
+        </div>
+
+        <BandList bands={preview.bands} />
+
+        <div className="row" style={{ marginTop: "auto" }}>
+          <button type="button" className="btn primary" disabled={pending} onClick={loadMore}>
+            {pending ? "出题中…" : "再答 12 题，更准"}
+          </button>
+          <button type="button" className="btn ghost" disabled={pending} onClick={finish}>
+            就到这里，看结果
+          </button>
         </div>
       </div>
     );
@@ -115,44 +222,23 @@ export default function LevelTest({ items }: { items: Item[] }) {
             <span className={`badge ${result.level === "cet6" ? "warn" : "accent"}`}>
               {result.level === "cet6" ? "六级" : "四级"}
             </span>
-            <span className="badge">答对 {result.correctCount} / {result.total}</span>
-            <span className="badge">置信度 {(result.confidence * 100).toFixed(0)}%</span>
+            <span className="badge">
+              答对 {result.correctCount} / {result.total}
+            </span>
           </div>
         </div>
 
-        <div className="stack" style={{ gap: 8 }}>
-          <div className="quiz-sub">分段正确率</div>
-          {result.bands.map((band) => {
-            const corrected = band.total > 0 ? Math.max(0, (band.rate - 0.25) / 0.75) : 0;
-            return (
-              <div key={band.band}>
-                <div className="kv" style={{ padding: "2px 0" }}>
-                  <span className="tiny">{band.label}</span>
-                  <b className="tiny">{band.correct}/{band.total}</b>
-                </div>
-                <div className="meter" style={{ height: 5 }}>
-                  <i style={{ width: `${Math.max(2, Math.round(corrected * 100))}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <BandList bands={result.bands} />
 
         <div className="row" style={{ marginTop: "auto" }}>
           <Link href="/library" className="btn primary">
             进入书库 →
           </Link>
-          <button
-            type="button"
-            className="btn ghost"
-            onClick={() => {
-              setStage("intro");
-              setCursor(0);
-              setAnswers([]);
-              setResult(null);
-            }}
-          >
-            再测一次
+          <button type="button" className="btn ghost" disabled={pending} onClick={loadMore}>
+            再答几题
+          </button>
+          <button type="button" className="btn ghost" disabled={pending} onClick={restart}>
+            重新测
           </button>
         </div>
       </div>

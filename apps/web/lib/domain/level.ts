@@ -55,21 +55,6 @@ export function estimateVocabSize(bands: BandAccuracy[]): number {
   return Math.max(500, Math.min(12000, Math.round(total)));
 }
 
-/**
- * 置信度：题量 + 极端一致性 + 频段覆盖。
- * 全对或全错都不可信（要么真强，要么在乱点），所以极端时给低分。
- */
-export function estimateConfidence(bands: BandAccuracy[]): number {
-  const total = bands.reduce((acc, b) => acc + b.total, 0);
-  if (total === 0) return 0;
-  const correct = bands.reduce((acc, b) => acc + b.correct, 0);
-  const accuracy = correct / total;
-  const extreme = Math.max(accuracy, 1 - accuracy);
-  const coverage = new Set(bands.filter((b) => b.total > 0).map((b) => b.band)).size / BUCKETS.length;
-  const volume = Math.min(1, total / 24);
-  return Math.round((0.5 * volume + 0.3 * coverage + 0.2 * (1 - extreme)) * 100) / 100;
-}
-
 /** 把频段正确率转成结果页可直接画的数据。 */
 export function bandSummary(bands: BandAccuracy[]) {
   return BUCKETS.map((bucket) => {
