@@ -46,15 +46,19 @@ public/generated/chapters/<slug>/<n>.png    章节插图，1K / 16:9 → 1312×7
 命令（在 `apps/web` 下）：
 
 ```bash
-npm run images -- --covers               # 推荐 + 挑战区 27 本的书封
-npm run images -- --covers --all         # 连 82 本「需改写」也生成
-npm run images -- --book the-wonderful-wizard-of-oz --limit 3
-npm run images -- --chapter the-wonderful-wizard-of-oz 1
-npm run images -- --covers --force       # 覆盖已有图
+npm run covers                             # 全部书封，水彩风（已有图跳过，可断点续跑）
+npm run covers -- --force                  # 全部重画
+npm run covers -- --slug the-wonderful-wizard-of-oz --force
+npm run covers -- --limit 10 --concurrency 3
+npm run images -- --chapter the-wonderful-wizard-of-oz 1   # 章节插图（另一种风格）
 ```
 
-参数：`--limit N` 限张数、`--interval 2600` 请求间隔（毫秒）、`--force` 重画已有图。
-已有图默认跳过，所以命令可以反复跑、断点续传。
+书封分两步：先用 DeepSeek 把书名/作者/开头几句话压成一句"画面描述"（缓存到
+`data/covers/briefs.json`），再交给 Agnes 画成水彩封面并写上书名与作者。
+`--concurrency` 默认 2；免费档并发 3 时偶尔会遇到 HTTP 429，重跑即可（已有图会跳过）。
+
+参数：`--limit N` 限张数、`--interval 800` 请求间隔（毫秒）、`--force` 重画已有图、
+`--slug <slug>` 只画一本。已有图默认跳过，所以命令可以反复跑、断点续传。
 
 ### 单张图（任意 prompt）
 

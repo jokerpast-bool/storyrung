@@ -14,7 +14,8 @@
     "images": "node --import tsx scripts/generate-images.ts",
     "image": "node --import tsx scripts/generate-one.ts",
     "check-key": "node --import tsx scripts/check-agnes.ts",
-    "test": "node --import tsx --test lib/domain/level.test.ts lib/domain/coverage.test.ts lib/domain/prep.test.ts lib/domain/srs.test.ts"
+    "test": "node --import tsx --test lib/domain/level.test.ts lib/domain/coverage.test.ts lib/domain/prep.test.ts lib/domain/srs.test.ts",
+    "covers": "node --import tsx scripts/make-covers.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",

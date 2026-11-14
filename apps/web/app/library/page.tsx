@@ -35,38 +35,36 @@ function BookTile({
   challenge?: boolean;
 }) {
   return (
-    <Link href={`/book/${book.slug}`} className="card hover">
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <div className="row" style={{ gap: 10, minWidth: 0 }}>
-          <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} src={cover} />
-          <div style={{ minWidth: 0 }}>
-            <h3 style={{ margin: 0 }}>{book.title}</h3>
-            <div className="muted tiny">{book.author}</div>
+    <Link href={`/book/${book.slug}`} className="card hover tile">
+      <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" src={cover} />
+      <div className="tile-body">
+        <div style={{ minWidth: 0 }}>
+          <h3 style={{ margin: 0 }}>{book.title}</h3>
+          <div className="muted tiny">{book.author}</div>
+          <div className="tile-badges">
+            <span className={`badge ${book.level === "cet4" ? "accent" : "warn"}`}>
+              {LEVEL_LABEL[book.level] ?? "四级"}
+            </span>
+            {book.adaptedTier && <span className="badge accent">改写 · {LEVEL_LABEL[book.adaptedTier]}</span>}
+            {challenge && <span className="badge warn">挑战</span>}
           </div>
         </div>
-        <div className="stack" style={{ alignItems: "flex-end", gap: 4 }}>
-          <span className={`badge ${book.level === "cet4" ? "accent" : "warn"}`}>
-            {LEVEL_LABEL[book.level] ?? "四级"}
-          </span>
-          {book.adaptedTier && <span className="badge accent">改写 · {LEVEL_LABEL[book.adaptedTier]}</span>}
-          {challenge && <span className="badge warn">挑战</span>}
-        </div>
-      </div>
 
-      <div className="kv" style={{ marginTop: 14 }}>
-        <span>覆盖率</span>
-        <b>{pct(book.personalCoverage)}</b>
-      </div>
-      <CoverageBar value={book.personalCoverage} threshold={threshold} />
-      <div className="kv" style={{ marginTop: 10 }}>
-        <span>生词</span>
-        <b>{book.estUnknownWords}</b>
-      </div>
-      <div className="kv">
-        <span>篇幅</span>
-        <b>
-          {book.wordCount.toLocaleString()} 词 · {book.chapterCount} 章
-        </b>
+        <div className="kv" style={{ marginTop: 16 }}>
+          <span>覆盖率</span>
+          <b>{pct(book.personalCoverage)}</b>
+        </div>
+        <CoverageBar value={book.personalCoverage} threshold={threshold} />
+        <div className="kv" style={{ marginTop: 10 }}>
+          <span>生词</span>
+          <b>{book.estUnknownWords}</b>
+        </div>
+        <div className="kv">
+          <span>篇幅</span>
+          <b>
+            {book.wordCount.toLocaleString()} 词 · {book.chapterCount} 章
+          </b>
+        </div>
       </div>
     </Link>
   );

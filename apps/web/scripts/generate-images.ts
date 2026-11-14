@@ -98,6 +98,26 @@ async function exists(file: string): Promise<boolean> {
   }
 }
 
+/** 书封要"按内容画"：优先用管线里的第一章句子，没有章节的书退回原文开头。 */
+async function coverExcerpt(book: BookJson): Promise<string | undefined> {
+  const first = book.chapters[0];
+  if (first?.sentences?.length) return excerptFrom(first.sentences, 300);
+  const file = path.resolve(process.cwd(), "..", "..", "data", "books", `${book.slug}.txt`);
+  try {
+    const raw = await readFile(file, "utf8");
+    const start = raw.indexOf("*** START");
+    let body = start >= 0 ? raw.slice(raw.indexOf("\n", start) + 1) : raw;
+    const end = body.indexOf("*** END");
+    if (end > 0) body = body.slice(0, end);
+    const chapter = body.search(/\n\s*(CHAPTER|Chapter|PART|BOOK)\b/);
+    if (chapter > 0) body = body.slice(chapter);
+    const flat = body.replace(/\s+/g, " ").trim();
+    return flat.slice(0, 420);
+  } catch {
+    return undefined;
+  }
+}
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -145,7 +165,7 @@ async function main() {
       process.stdout.write(`  · [${i + 1}/${targets.length}] ${book.title} … `);
       try {
         const image = await generateImage({
-          prompt: coverPrompt(book),
+          prompt: coverPrompt(book, await coverExcerpt(book)),
           size: "1K",
           ratio: "3:4",
         });

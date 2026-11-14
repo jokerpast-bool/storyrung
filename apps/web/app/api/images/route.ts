@@ -14,6 +14,7 @@ import {
   excerptFrom,
   illustrationPrompt,
 } from "@/lib/generated-art";
+import { deepSeekBrief, loadBriefs, manualBrief, saveBriefs } from "@/lib/visual-brief";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -53,11 +54,42 @@ export async function POST(request: Request) {
       const existing = coverUrl(book.slug);
       if (existing && !payload.force) return NextResponse.json({ ok: true, url: existing, cached: true });
 
+      const firstChapter = await prisma.chapter.findFirst({
+        where: { bookId: book.id },
+        orderBy: { index: "asc" },
+        select: { id: true },
+      });
+      const opening = firstChapter
+        ? await prisma.chapterSentence.findMany({
+            where: { chapterId: firstChapter.id },
+            orderBy: { index: "asc" },
+            take: 2,
+            select: { text: true },
+          })
+        : [];
+
+      // 画面描述优先用缓存，缺了就现场让 DeepSeek 写一句
+      const briefs = await loadBriefs();
+      let brief = manualBrief(book.slug) ?? briefs[book.slug];
+      if (!brief) {
+        const written = await deepSeekBrief({
+          title: book.title,
+          author: book.author,
+          excerpt: excerptFrom(opening, 500),
+        });
+        if (written) {
+          brief = written;
+          briefs[book.slug] = written;
+          await saveBriefs(briefs);
+        }
+      }
+
       const started = Date.now();
       const image = await generateImage({
-        prompt: coverPrompt({ title: book.title, author: book.author }),
+        prompt: coverPrompt({ title: book.title, author: book.author }, brief),
         size: "1K",
         ratio: "3:4",
+        timeoutMs: 240_000,
       });
       const file = coverFilePath(book.slug);
       await mkdir(path.dirname(file), { recursive: true });

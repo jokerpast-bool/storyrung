@@ -13,11 +13,15 @@
 
 ## 界面
 
-首页：大字标 + 细线 + 线描书，下面是书架三本和无框统计条。
+首页：大字标 + 细线 + 手绘线描书，下面是书架三本和无框统计条。
 
 ![首页（桌面）](docs/screenshots/home-desktop.png)
 
 ![首页（移动端）](docs/screenshots/home-mobile.png)
+
+书库：每本书一张 AI 水彩封面（按书名 + 开头段落生成），左侧封面、右侧覆盖率与篇幅。
+
+![书库](docs/screenshots/library-desktop.png)
 
 ## 快速开始
 
