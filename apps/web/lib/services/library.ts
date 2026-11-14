@@ -94,6 +94,70 @@ export async function listLibrary(
   });
 }
 
+export interface ContinueReading {
+  bookSlug: string;
+  bookTitle: string;
+  chapterIndex: number;
+  chapterTitle: string;
+  /** 本章句子数，用来算读了多少 */
+  sentenceCount: number;
+  position: number;
+  percent: number;
+  /** 这一章已经读完：链接指下一章 */
+  finished: boolean;
+  /** 读完最后一章时为 true，链接回到书详情 */
+  atEnd: boolean;
+}
+
+/**
+ * 首页「接着读」：找这个用户最近动过的一章。
+ * 只认真的读过（position > 0）或标记读完了的记录，避免刚做完预习就被当成在读。
+ */
+export async function getContinueReading(userId: string): Promise<ContinueReading | null> {
+  const row = await prisma.chapterProgress.findFirst({
+    where: {
+      userId,
+      OR: [{ position: { gt: 0 } }, { completedAt: { not: null } }],
+    },
+    orderBy: { updatedAt: "desc" },
+    include: { chapter: { include: { book: true } } },
+  });
+  if (!row) return null;
+
+  const { chapter } = row;
+  const finished = Boolean(row.completedAt);
+  if (!finished) {
+    return {
+      bookSlug: chapter.book.slug,
+      bookTitle: chapter.book.title,
+      chapterIndex: chapter.index,
+      chapterTitle: chapter.title,
+      sentenceCount: chapter.sentenceCount,
+      position: row.position,
+      percent: Math.min(99, Math.round(((row.position + 1) / Math.max(1, chapter.sentenceCount)) * 100)),
+      finished: false,
+      atEnd: false,
+    };
+  }
+
+  // 读完了：优先指下一章；已经是最后一章就回书详情
+  const next = await prisma.chapter.findFirst({
+    where: { bookId: chapter.bookId, index: { gt: chapter.index } },
+    orderBy: { index: "asc" },
+  });
+  return {
+    bookSlug: chapter.book.slug,
+    bookTitle: chapter.book.title,
+    chapterIndex: next?.index ?? chapter.index,
+    chapterTitle: next?.title ?? chapter.title,
+    sentenceCount: next?.sentenceCount ?? chapter.sentenceCount,
+    position: 0,
+    percent: finished && !next ? 100 : 0,
+    finished: true,
+    atEnd: !next,
+  };
+}
+
 export async function getBookDetail(
   slug: string,
   userId: string,

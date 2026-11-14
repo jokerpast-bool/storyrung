@@ -156,6 +156,46 @@ body {
   margin-top: 28px;
 }
 
+.home-resume {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 15px;
+  max-width: 460px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.home-resume-label {
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+
+.home-resume-title {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 15px;
+}
+
+.home-resume:hover .home-resume-title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-resume-meta {
+  font-variant-numeric: tabular-nums;
+}
+
+.home-resume svg {
+  align-self: center;
+  color: var(--muted);
+}
+
 .home-art {
   justify-self: end;
   width: 100%;

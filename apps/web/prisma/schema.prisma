@@ -152,6 +152,8 @@ model ChapterProgress {
   lookupCount    Int      @default(0)
   readingSeconds Int      @default(0)
   completedAt    DateTime?
+  /// 最后一次读写时间：首页"接着读"靠它找最近的章节
+  updatedAt      DateTime @default(now()) @updatedAt
 
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   chapter        Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)

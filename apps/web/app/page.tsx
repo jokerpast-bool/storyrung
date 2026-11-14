@@ -5,7 +5,7 @@ import BookCover from "@/components/BookCover";
 import HeroArt from "@/components/HeroArt";
 import { prisma } from "@/lib/db";
 import { coverUrl } from "@/lib/generated-art";
-import { listLibrary } from "@/lib/services/library";
+import { listLibrary, getContinueReading } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
 export const dynamic = "force-dynamic";
@@ -15,12 +15,13 @@ const LEVEL_LABEL: Record<string, string> = { cet4: "四级", cet6: "六级", to
 export default async function HomePage() {
   const user = await getDemoUser();
   const known = await getKnownSet(user.id, effectiveVocabSize(user));
-  const [readable, challenges, dueCards, vocabCount, finished] = await Promise.all([
+  const [readable, challenges, dueCards, vocabCount, finished, resume] = await Promise.all([
     listLibrary(user.id, known, { admission: "pass" }),
     listLibrary(user.id, known, { admission: "challenge" }),
     prisma.reviewCard.count({ where: { userId: user.id, dueAt: { lte: new Date() } } }),
     prisma.userVocabState.count({ where: { userId: user.id } }),
     prisma.chapterProgress.count({ where: { userId: user.id, completedAt: { not: null } } }),
+    getContinueReading(user.id),
   ]);
   const shelf = [...readable, ...challenges].slice(0, 3);
   const bookCount = readable.length + challenges.length;
@@ -54,6 +55,23 @@ export default async function HomePage() {
               </>
             )}
           </div>
+
+          {resume && (
+            <Link
+              href={resume.atEnd ? `/book/${resume.bookSlug}` : `/book/${resume.bookSlug}/${resume.chapterIndex}/read`}
+              className="home-resume"
+            >
+              <span className="home-resume-label">
+                {resume.atEnd ? "已读完" : resume.finished ? "读下一章" : "接着读"}
+              </span>
+              <span className="home-resume-title">{resume.bookTitle}</span>
+              <span className="home-resume-meta">
+                {resume.atEnd ? "全书读完" : `第 ${resume.chapterIndex} 章`}
+                {!resume.atEnd && !resume.finished ? ` · ${resume.percent}%` : ""}
+              </span>
+              <ArrowRight size={14} />
+            </Link>
+          )}
         </div>
         <div className="home-art">
           <HeroArt />
