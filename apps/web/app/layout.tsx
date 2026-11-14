@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpen, Gauge, NotebookPen, Repeat } from "lucide-react";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -25,22 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               story<span>rung</span>
             </Link>
             <div className="nav-links">
-              <Link href="/library">
-                <BookOpen size={15} />
-                书库
-              </Link>
-              <Link href="/vocab">
-                <NotebookPen size={15} />
-                生词本
-              </Link>
-              <Link href="/level-test">
-                <Gauge size={15} />
-                测评
-              </Link>
-              <Link href="/review">
-                <Repeat size={15} />
-                复习
-              </Link>
+              <Link href="/library">书库</Link>
+              <Link href="/vocab">生词本</Link>
+              <Link href="/level-test">测评</Link>
+              <Link href="/review">复习</Link>
             </div>
             <ThemeToggle />
           </nav>

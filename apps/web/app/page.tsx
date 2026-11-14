@@ -2,12 +2,15 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import BookCover from "@/components/BookCover";
+import HeroArt from "@/components/HeroArt";
 import { prisma } from "@/lib/db";
 import { coverUrl } from "@/lib/generated-art";
 import { listLibrary } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
 export const dynamic = "force-dynamic";
+
+const LEVEL_LABEL: Record<string, string> = { cet4: "四级", cet6: "六级", toefl: "托福" };
 
 export default async function HomePage() {
   const user = await getDemoUser();
@@ -20,56 +23,75 @@ export default async function HomePage() {
     prisma.chapterProgress.count({ where: { userId: user.id, completedAt: { not: null } } }),
   ]);
   const shelf = [...readable, ...challenges].slice(0, 3);
+  const bookCount = readable.length + challenges.length;
   const hasLevel = user.level !== "unknown";
 
   return (
     <main>
-      <section className="hero-panel">
-        <h1 className="hero-wordmark">
-          story<span>rung</span>
-        </h1>
-        <div className="row">
-          {hasLevel ? (
-            <>
+      <section className="home-hero">
+        <div className="home-hero-copy">
+          <h1 className="home-wordmark">
+            story<span>rung</span>
+          </h1>
+          <div className="home-rule" aria-hidden />
+          <p className="home-tagline">Read your way up.</p>
+          <p className="home-status">
+            {hasLevel ? `${LEVEL_LABEL[user.level] ?? user.level} · ${user.vocabSize.toLocaleString()} 词` : "还没测过词汇量"}
+          </p>
+          <div className="home-actions">
+            {hasLevel ? (
               <Link href="/library" className="btn primary">
                 进入书库 <ArrowRight size={15} />
               </Link>
-              <span className="muted small">
-                {user.level === "cet6" ? "六级" : "四级"} · {user.vocabSize} 词
-              </span>
-            </>
-          ) : (
-            <>
-              <Link href="/level-test" className="btn primary">
-                测词汇量 <ArrowRight size={15} />
-              </Link>
-              <Link href="/library" className="btn ghost">
-                先看书库
-              </Link>
-            </>
-          )}
-        </div>
-
-        {shelf.length > 0 && (
-          <div className="hero-books">
-            {shelf.map((book) => (
-              <Link key={book.id} href={`/book/${book.slug}`} title={book.title}>
-                <BookCover
-                  slug={book.slug}
-                  title={book.title}
-                  emoji={book.coverEmoji}
-                  size="lg"
-                  src={coverUrl(book.slug)}
-                />
-              </Link>
-            ))}
+            ) : (
+              <>
+                <Link href="/level-test" className="btn primary">
+                  测词汇量 <ArrowRight size={15} />
+                </Link>
+                <Link href="/library" className="btn ghost">
+                  先看书库
+                </Link>
+              </>
+            )}
           </div>
-        )}
+        </div>
+        <div className="home-art">
+          <HeroArt />
+        </div>
       </section>
+
+      {shelf.length > 0 && (
+        <section className="shelf">
+          <div className="shelf-head">
+            <span className="shelf-label">书架</span>
+            <Link href="/library" className="shelf-more">
+              全部 {bookCount} 本 →
+            </Link>
+          </div>
+          <div className="shelf-grid">
+            {shelf.map((book) => {
+              const tier = book.adaptedTier ? "改写" : LEVEL_LABEL[book.level] ?? "";
+              return (
+                <Link key={book.id} href={`/book/${book.slug}`} className="shelf-card" title={book.title}>
+                  <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" src={coverUrl(book.slug)} />
+                  <div className="shelf-meta">
+                    <div className="shelf-title">{book.title}</div>
+                    <div className="shelf-author">{book.author}</div>
+                    <div className="shelf-foot">
+                      <span>{tier}</span>
+                      <span>{book.chapterCount} 章</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <div className="stat-strip">
         <div>
-          <div className="stat-value">{readable.length + challenges.length}</div>
+          <div className="stat-value">{bookCount}</div>
           <div className="muted tiny">可读书目</div>
         </div>
         <div>
@@ -85,7 +107,6 @@ export default async function HomePage() {
           <div className="muted tiny">读完章节</div>
         </div>
       </div>
-
     </main>
   );
 }

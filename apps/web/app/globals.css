@@ -52,9 +52,9 @@ a {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 18px 0 22px;
+  padding: 20px 0;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .brand {
@@ -70,20 +70,19 @@ a {
 
 .nav-links {
   display: flex;
-  gap: 6px;
+  gap: 22px;
   margin-left: auto;
   flex-wrap: wrap;
 }
 
 .nav-links a {
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 2px 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
 }
 
 .nav-links a:hover {
-  background: var(--surface-2);
   color: var(--ink);
 }
 
