@@ -22,5 +22,7 @@ data/catalog/
 apps/web/public/generated/
 
 .dsh-acl-recovery/
-data/adapted/
+# 改写稿：只入库成品 .txt 与 .meta.json，逐章缓存不入库
+data/adapted/**/*.json
+!data/adapted/**/*.meta.json
 .tmp/
