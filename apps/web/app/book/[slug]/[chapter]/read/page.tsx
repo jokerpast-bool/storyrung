@@ -43,6 +43,8 @@ export default async function ReadPage({
         chapterId={view.chapter.id}
         bookSlug={slug}
         bookTitle={view.chapter.bookTitle}
+        chapterIndex={chapterIndex}
+        chapterCount={view.chapter.chapterCount}
         chapterTitle={view.chapter.title}
         wordCount={view.chapter.wordCount}
         estMinutes={view.chapter.estMinutes}

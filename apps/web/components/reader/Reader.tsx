@@ -33,6 +33,9 @@ interface Props {
   chapterId: string;
   bookSlug: string;
   bookTitle: string;
+  /** 当前第几章（从 1 开始）与全书章数，底部「上一章 / 下一章」用 */
+  chapterIndex: number;
+  chapterCount: number;
   chapterTitle: string;
   wordCount: number;
   estMinutes: number;
@@ -165,7 +168,8 @@ export default function Reader(props: Props) {
           <div className="reader-book">{props.bookTitle}</div>
           <h1>{props.chapterTitle}</h1>
           <div className="reader-meta">
-            {props.wordCount} 词 · 约 {props.estMinutes} 分钟 · {sentences.length} 句
+            第 {props.chapterIndex} / {props.chapterCount} 章 · {props.wordCount} 词 · 约 {props.estMinutes} 分钟 ·{" "}
+            {sentences.length} 句
           </div>
         </header>
 
@@ -186,33 +190,31 @@ export default function Reader(props: Props) {
         </div>
 
         <footer className="reader-foot">
-          <button
-            type="button"
-            className="btn ghost"
-            disabled={active <= 0}
-            onClick={(event) => {
-              event.stopPropagation();
-              jumpTo(active - 1);
-            }}
-          >
-            <ChevronLeft size={16} />
-            上一段
-          </button>
+          {props.chapterIndex > 1 ? (
+            <Link className="btn ghost" href={`/book/${bookSlug}/${props.chapterIndex - 1}/read`}>
+              <ChevronLeft size={16} />
+              上一章
+            </Link>
+          ) : (
+            <span className="btn ghost is-disabled" aria-disabled="true">
+              <ChevronLeft size={16} />
+              上一章
+            </span>
+          )}
           <Link className="btn" href={`/review?chapter=${chapterId}`}>
             读完了，去复习
           </Link>
-          <button
-            type="button"
-            className="btn ghost"
-            disabled={active >= sentences.length - 1}
-            onClick={(event) => {
-              event.stopPropagation();
-              jumpTo(active + 1);
-            }}
-          >
-            下一段
-            <ChevronRight size={16} />
-          </button>
+          {props.chapterIndex < props.chapterCount ? (
+            <Link className="btn ghost" href={`/book/${bookSlug}/${props.chapterIndex + 1}/read`}>
+              下一章
+              <ChevronRight size={16} />
+            </Link>
+          ) : (
+            <span className="btn ghost is-disabled" aria-disabled="true">
+              下一章
+              <ChevronRight size={16} />
+            </span>
+          )}
         </footer>
       </article>
 

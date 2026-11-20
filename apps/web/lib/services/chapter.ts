@@ -36,6 +36,8 @@ export interface ChapterBundle {
   bookSlug: string;
   bookTitle: string;
   bookLevel: string;
+  /** 全书章节数，阅读器底部「下一章」要靠它判断是否到最后一章 */
+  chapterCount: number;
   index: number;
   title: string;
   wordCount: number;
@@ -63,6 +65,7 @@ async function loadChapter(slug: string, index: number): Promise<ChapterBundle |
     bookSlug: chapter.book.slug,
     bookTitle: chapter.book.title,
     bookLevel: chapter.book.level,
+    chapterCount: chapter.book.chapterCount,
     index: chapter.index,
     title: chapter.title,
     wordCount: chapter.wordCount,
