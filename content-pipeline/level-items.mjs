@@ -8,8 +8,8 @@
  * 单独跑：node content-pipeline/level-items.mjs
  */
 import { createReadStream } from "node:fs";
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseCsv } from "csv-parse";
 
@@ -161,6 +161,7 @@ export async function writeLevelItems(outPath = join(DIST_DIR, "level-items.json
   console.log("· 生成测评题库 …");
   const rows = await loadEcdictRows();
   const items = selectLevelItems(rows);
+  await mkdir(dirname(outPath), { recursive: true });
   await writeFile(outPath, JSON.stringify(items), "utf8");
   console.log(`· 写出 ${items.length} 道测评题 → ${outPath}`);
   return items;
