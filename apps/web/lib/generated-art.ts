@@ -6,12 +6,17 @@ import { displayAuthor } from "./visual-brief";
 /**
  * 生成图的落盘位置与提示词。
  *
- * 图片放在 public/generated/ 下（整个目录 .gitignore，不入库）：
+ * 本地生成的原始图放在 public/generated/（整个目录 .gitignore）：
  *   covers/<slug>.png
  *   chapters/<slug>/<index>.png
+ * 压好的书封（600px WebP）放在 public/covers/，随仓库提交，
+ * 这样别人 clone 下来不用调 Agnes 也能看到封面；没有 WebP 时回退到本地 PNG。
  */
 
 export const GENERATED_ROOT = path.join(process.cwd(), "public", "generated");
+
+/** 入库的压缩书封（600px WebP），别人克隆下来就有。 */
+const BUNDLED_COVERS = path.join(process.cwd(), "public", "covers");
 
 const STYLE =
   "antique storybook illustration, gouache with fine ink linework, warm cream paper texture, " +
@@ -54,7 +59,10 @@ function urlWithMtime(filePath: string, url: string): string | null {
 }
 
 export function coverUrl(slug: string): string | null {
-  return urlWithMtime(coverFilePath(slug), `/generated/covers/${slug}.png`);
+  return (
+    urlWithMtime(path.join(BUNDLED_COVERS, `${slug}.webp`), `/covers/${slug}.webp`) ??
+    urlWithMtime(coverFilePath(slug), `/generated/covers/${slug}.png`)
+  );
 }
 
 export function chapterArtUrl(slug: string, index: number): string | null {

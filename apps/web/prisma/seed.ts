@@ -89,6 +89,66 @@ async function readJson<T>(file: string): Promise<T> {
   return JSON.parse(await readFile(join(DIST, file), "utf8")) as T;
 }
 
+interface DemoState {
+  email: string;
+  level: string;
+  vocabSize: number;
+  progress: { bookSlug: string; chapterIndex: number; position: number; completed: boolean }[];
+  vocab: { lemma: string; status: string; mastery: number; source: string }[];
+}
+
+/**
+ * 把 data/demo-state.json（演示用户的词汇量、阅读进度、生词）灌进库里，
+ * 让刚 clone 的人打开首页就能看到和作者一样的「接着读」状态。没有该文件就跳过。
+ */
+async function applyDemoState(): Promise<void> {
+  const file = join(process.cwd(), "..", "..", "data", "demo-state.json");
+  let state: DemoState;
+  try {
+    state = JSON.parse(await readFile(file, "utf8")) as DemoState;
+  } catch {
+    return;
+  }
+
+  const user = await prisma.user.upsert({
+    where: { email: state.email },
+    update: { level: state.level, vocabSize: state.vocabSize },
+    create: { email: state.email, name: "Demo", level: state.level, vocabSize: state.vocabSize },
+  });
+
+  for (const row of state.progress) {
+    const chapter = await prisma.chapter.findFirst({
+      where: { index: row.chapterIndex, book: { slug: row.bookSlug } },
+    });
+    if (!chapter) continue;
+    const data = {
+      position: row.position,
+      completedAt: row.completed ? new Date() : null,
+    };
+    await prisma.chapterProgress.upsert({
+      where: { userId_chapterId: { userId: user.id, chapterId: chapter.id } },
+      update: data,
+      create: { userId: user.id, chapterId: chapter.id, ...data },
+    });
+  }
+
+  for (const row of state.vocab) {
+    await prisma.userVocabState.upsert({
+      where: { userId_lemma: { userId: user.id, lemma: row.lemma } },
+      update: { status: row.status, mastery: row.mastery, source: row.source },
+      create: {
+        userId: user.id,
+        lemma: row.lemma,
+        status: row.status,
+        mastery: row.mastery,
+        source: row.source,
+      },
+    });
+  }
+
+  console.log(`· 演示状态：${state.level} ${state.vocabSize} 词，进度 ${state.progress.length} 条，生词 ${state.vocab.length} 条`);
+}
+
 async function main() {
   const [books, lemmaIndex, levelItems] = await Promise.all([
     readJson<RawBook[]>("books.json"),
@@ -185,6 +245,8 @@ async function main() {
       }
     }
   }
+
+  await applyDemoState();
 
   const counts = {
     books: await prisma.book.count(),

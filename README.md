@@ -22,7 +22,7 @@ npm run db:seed
 npm run dev             # http://127.0.0.1:3100
 ```
 
-> 仓库里只有代码（约 350 KB）：书籍原文、Gutenberg 目录、管线产物和 SQLite 库都在 `.gitignore` 里，首次运行按「快速开始」跑一遍管线即可重建。
+> 仓库里是代码 + 两样「上手就能看见」的东西：`apps/web/public/covers/` 的 109 张压缩书封（8.3MB，不用调 Agnes）和 `data/demo-state.json`（演示用户的词汇量与阅读进度，`db:seed` 时自动灌入，所以首页会直接出现「接着读」）。书籍原文、Gutenberg 目录、管线产物和 SQLite 库仍不进仓库，按上面的命令重建。
 
 ## 界面
 
@@ -136,7 +136,7 @@ npm run images -- --covers           # 可读书目的书封
 npm run images -- --chapter <slug> 1 # 单章插图
 ```
 
-生成结果落在 `apps/web/public/generated/`（已 gitignore）；没有图的书写封自动退回渐变色块。详见 [docs/AGNES.md](docs/AGNES.md)。
+生成结果落在 `apps/web/public/generated/`（已 gitignore）。压好的 600px WebP 在 `apps/web/public/covers/`（随仓库提交，`python apps/web/scripts/pack-covers.py` 重新打包）；`coverUrl()` 先找 WebP、再回退本地 PNG、最后退回渐变色块，所以不配 key 也能看到书封。详见 [docs/AGNES.md](docs/AGNES.md)。
 
 ## 内容数据现状（实测）
 

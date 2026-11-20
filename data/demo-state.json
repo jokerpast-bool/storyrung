@@ -1,0 +1,873 @@
+{
+  "email": "demo@english-reading.local",
+  "level": "cet4",
+  "vocabSize": 667,
+  "progress": [
+    {
+      "bookSlug": "the-blue-fairy-book",
+      "chapterIndex": 1,
+      "position": 4,
+      "completed": false
+    },
+    {
+      "bookSlug": "the-blue-fairy-book",
+      "chapterIndex": 2,
+      "position": 4,
+      "completed": false
+    },
+    {
+      "bookSlug": "the-wonderful-wizard-of-oz",
+      "chapterIndex": 1,
+      "position": 58,
+      "completed": true
+    },
+    {
+      "bookSlug": "the-wonderful-wizard-of-oz",
+      "chapterIndex": 2,
+      "position": 57,
+      "completed": false
+    }
+  ],
+  "vocab": [
+    {
+      "lemma": "ability",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "accomplishment",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "accuse",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "acid",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "acquisition",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "affirm",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "afterwards",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "ala",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "an",
+      "status": "learning",
+      "mastery": 0.72,
+      "source": "exercise"
+    },
+    {
+      "lemma": "and",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "ant",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "anthropology",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "applause",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "application",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "apprentice",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "approval",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "assimilate",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "audit",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "bad",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "bake",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "be",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "beautifully",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "bed",
+      "status": "unknown",
+      "mastery": 0.05,
+      "source": "exercise"
+    },
+    {
+      "lemma": "beverage",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "boom",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "brace",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "brag",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "break",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "brew",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "bubble",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "build",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "bureau",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "by",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "can",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "candle",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "carpet",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "cartoon",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "cautious",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "chair",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "clip",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "cloud",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "concrete",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "confusing",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "conjure",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "corn",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "correspond",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "crush",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "curtsey",
+      "status": "learning",
+      "mastery": 0.552,
+      "source": "exercise"
+    },
+    {
+      "lemma": "cyclone",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "daisy",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "dart",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "decay",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "defensive",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "deficit",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "disagree",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "disappointment",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "discovery",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "document",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "dorothy",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "down",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "dual",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "earring",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "expel",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "experienced",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "explanation",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "explosive",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "facility",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "fancy",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "farmer",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "feat",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "financially",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "fist",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "follower",
+      "status": "learning",
+      "mastery": 0.72,
+      "source": "exercise"
+    },
+    {
+      "lemma": "for",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "fuel",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "goose",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "grandson",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "great",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "gulf",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "hard",
+      "status": "learning",
+      "mastery": 0.66,
+      "source": "exercise"
+    },
+    {
+      "lemma": "henry",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "hole",
+      "status": "unknown",
+      "mastery": 0.05,
+      "source": "exercise"
+    },
+    {
+      "lemma": "hypothesis",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "integrated",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "invest",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "isolate",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "kansa",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "lens",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "leverage",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "liability",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "look",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "loud",
+      "status": "learning",
+      "mastery": 0.66,
+      "source": "exercise"
+    },
+    {
+      "lemma": "lumber",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "luxury",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "mechanic",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "mentality",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "merge",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "news",
+      "status": "learning",
+      "mastery": 0.456,
+      "source": "exercise"
+    },
+    {
+      "lemma": "noble",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "observation",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "one",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "order",
+      "status": "learning",
+      "mastery": 0.66,
+      "source": "exercise"
+    },
+    {
+      "lemma": "personnel",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "pity",
+      "status": "learning",
+      "mastery": 0.72,
+      "source": "exercise"
+    },
+    {
+      "lemma": "plainly",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "playground",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "poker",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "precedent",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "prevent",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "primarily",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "proudly",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "rabbit",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "raid",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "ray",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "reasonable",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "rebel",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "roast",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "satisfy",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "several",
+      "status": "unknown",
+      "mastery": 0.075,
+      "source": "exercise"
+    },
+    {
+      "lemma": "stab",
+      "status": "unknown",
+      "mastery": 0.075,
+      "source": "exercise"
+    },
+    {
+      "lemma": "stadium",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "steer",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "straightforward",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "strap",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "strip",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "tart",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "the",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "thrill",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "thump",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "exercise"
+    },
+    {
+      "lemma": "tire",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "tourism",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "tug",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "unseen",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "utility",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "verb",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "wail",
+      "status": "unknown",
+      "mastery": 0.05,
+      "source": "exercise"
+    },
+    {
+      "lemma": "whirlwind",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "with",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "click"
+    },
+    {
+      "lemma": "woman",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    },
+    {
+      "lemma": "yield",
+      "status": "unknown",
+      "mastery": 0.15,
+      "source": "test"
+    }
+  ]
+}
