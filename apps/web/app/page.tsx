@@ -6,6 +6,7 @@ import ShelfCarousel from "@/components/ShelfCarousel";
 import BookCover from "@/components/BookCover";
 import { prisma } from "@/lib/db";
 import { coverUrl } from "@/lib/generated-art";
+import { displayAuthor } from "@/lib/visual-brief";
 import { listLibrary, getContinueReading } from "@/lib/services/library";
 import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/user";
 
@@ -186,7 +187,7 @@ export default async function HomePage() {
                   <BookCover slug={book.slug} title={book.title} emoji={book.coverEmoji} size="lg" src={src} />
                 </div>
                 <h3>{book.title}</h3>
-                <p className="lp-round-author">{book.author}</p>
+                <p className="lp-round-author">{displayAuthor(book.author)}</p>
                 <p className="lp-round-meta">{book.chapterCount} 章 · {book.adaptedTier ? LEVEL_LABEL[book.adaptedTier] ?? "改写" : LEVEL_LABEL[book.level] ?? book.level}</p>
                 <span className="lp-round-go"><ArrowUpRight size={15} /></span>
               </Link>
@@ -206,23 +207,16 @@ export default async function HomePage() {
           <p className="lp-sub lp-collection-sub">从童书到经典，按难度排好的室内阅读书架。</p>
         </div>
         <div className="lp-collage">
-          {displayBooks.slice(3, 5).map((book) => {
+          {displayBooks.slice(3, 7).map((book) => {
             const src = coverUrl(book.slug);
             return (
-              <Link href={`/book/${book.slug}`} key={book.id} className="lp-collage-cell lp-collage-wide">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {src && <img src={src} alt="" />}
-                <span className="lp-collage-label">{book.title}</span>
-              </Link>
-            );
-          })}
-          {displayBooks.slice(5, 7).map((book) => {
-            const src = coverUrl(book.slug);
-            return (
-              <Link href={`/book/${book.slug}`} key={book.id} className="lp-collage-cell">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {src && <img src={src} alt="" />}
-                <span className="lp-collage-label">{book.title}</span>
+              <Link href={`/book/${book.slug}`} key={book.id} className="lp-book">
+                <span className="lp-book-cover">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {src ? <img src={src} alt="" /> : <span className="lp-book-fallback">{book.title.slice(0, 1)}</span>}
+                </span>
+                <span className="lp-book-title">{book.title}</span>
+                <span className="lp-book-author">{displayAuthor(book.author)}</span>
               </Link>
             );
           })}
@@ -241,7 +235,7 @@ export default async function HomePage() {
               id: book.id,
               slug: book.slug,
               title: book.title,
-              author: book.author,
+              author: displayAuthor(book.author),
               level: book.level,
               adaptedTier: book.adaptedTier,
               coverEmoji: book.coverEmoji,

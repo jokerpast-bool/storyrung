@@ -119,7 +119,8 @@ export default function ShelfCarousel({ books }: { books: ShelfBook[] }) {
           <ChevronLeft size={15} />
         </button>
         <span>
-          {active + 1} / {count} · 滚轮上滑向左 · 下滑向右 · 点击中间进入
+          {active + 1} / {count}
+          <span className="shelf-hint-keys"> · 滚轮上滑向左 · 下滑向右</span> · 点击中间进入
         </span>
         <button type="button" className="shelf-carousel-nav" aria-label="下一本" onClick={() => move(1)}>
           <ChevronRight size={15} />
