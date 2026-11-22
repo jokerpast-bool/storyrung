@@ -136,11 +136,8 @@ export async function recordAttempt(input: {
     latencyMs: input.latencyMs,
   });
 
-  const chapter = await prisma.chapter.findUnique({
-    where: { id: input.chapterId },
-    include: { book: true },
-  });
-  if (chapter) revalidatePath(`/book/${chapter.book.slug}/${chapter.index}/prep`);
+  // 不在预习过程中 revalidate /prep：服务端重渲染会把 words 换成"还没掌握的词"，
+  // 队列和"已通关"横幅都会跟着变，页面会跳。通关状态等进入阅读页时自然生效。
   revalidatePath("/review");
 
   return {

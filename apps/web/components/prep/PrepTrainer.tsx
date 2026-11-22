@@ -51,18 +51,29 @@ export default function PrepTrainer(props: Props) {
   const [startedAt, setStartedAt] = useState(() => Date.now());
   const [pending, startTransition] = useTransition();
 
+  /**
+   * 队列在挂载时冻结一次。
+   * 作答会触发服务端 revalidate，props.words 可能变成"还没掌握的词"的新列表；
+   * 如果队列跟着 props 重算，每答一题当前题号就会被重置，用户会看到题目突然跳走。
+   */
+  const [initial] = useState(() => ({
+    words: props.words,
+    phrases: props.phrases,
+    hardSentences: props.hardSentences,
+  }));
+
   const queue: Step[] = useMemo(
     () => [
-      ...props.words.map<Step>((item) => ({ kind: "word", item })),
-      ...props.phrases.map<Step>((item) => ({ kind: "phrase", item })),
-      ...props.hardSentences.map<Step>((item) => ({ kind: "sentence", item })),
+      ...initial.words.map<Step>((item) => ({ kind: "word", item })),
+      ...initial.phrases.map<Step>((item) => ({ kind: "phrase", item })),
+      ...initial.hardSentences.map<Step>((item) => ({ kind: "sentence", item })),
       { kind: "done" },
     ],
-    [props.words, props.phrases, props.hardSentences],
+    [initial],
   );
 
   const step = queue[Math.min(cursor, queue.length - 1)];
-  const totalGraded = props.words.length + props.phrases.length;
+  const totalGraded = initial.words.length + initial.phrases.length;
   const gradedDone = queue.slice(0, cursor).filter((s) => s.kind === "word" || s.kind === "phrase").length;
 
   function pick(option: string) {
@@ -200,32 +211,38 @@ export default function PrepTrainer(props: Props) {
         })}
       </div>
 
-      {feedback && (
-        <div className={`note ${feedback === "correct" ? "" : "danger"}`} style={{ marginTop: "auto" }}>
-          {feedback === "correct" ? "对了。" : "不对，正确释义已高亮。"}
-          <div style={{ marginTop: 10 }}>
-            <button type="button" className="btn primary" onClick={next}>
-              下一题 →
-            </button>
-          </div>
-        </div>
-      )}
-
+      {/**
+       * 答题反馈直接占用底部那一行，而不是在下面再插一块 note：
+       * 卡片高度保持恒定，点选项时页面不会往下跳一下。
+       */}
       <div className="row" style={{ justifyContent: "space-between", marginTop: "auto" }}>
-        <span className="progress-ring">
-          覆盖率 {(coverage * 100).toFixed(1)}% {unlocked ? "· 已解锁" : ""}
-        </span>
-        <button
-          type="button"
-          className="btn ghost"
-          onClick={() =>
-            startTransition(async () => {
-              await skipPrep({ chapterId, bookSlug, index: chapterIndex });
-            })
-          }
-        >
-          跳过，直接读
-        </button>
+        {feedback ? (
+          <span className={`quiz-feedback ${feedback === "correct" ? "ok" : "bad"}`}>
+            {feedback === "correct" ? "对了。" : "不对，正确释义已高亮。"}
+          </span>
+        ) : (
+          <span className="progress-ring">
+            覆盖率 {(coverage * 100).toFixed(1)}% {unlocked ? "· 已解锁" : ""}
+          </span>
+        )}
+
+        {feedback ? (
+          <button type="button" className="btn primary" onClick={next}>
+            下一题 →
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn ghost"
+            onClick={() =>
+              startTransition(async () => {
+                await skipPrep({ chapterId, bookSlug, index: chapterIndex });
+              })
+            }
+          >
+            跳过，直接读
+          </button>
+        )}
       </div>
     </div>
   );
