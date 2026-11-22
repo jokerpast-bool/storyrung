@@ -1329,24 +1329,27 @@ body {
   gap: 14px;
 }
 .lp-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 20px;
+  padding: 16px 18px;
   box-shadow: var(--shadow);
 }
 .lp-feature-ico {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
   border-radius: 11px;
   background: var(--accent-soft);
   color: var(--accent);
-  margin-bottom: 12px;
 }
-.lp-feature h3 { font-family: var(--serif); font-size: 19px; margin: 0 0 6px; }
+.lp-feature h3 { font-family: var(--serif); font-size: 17px; margin: 0; line-height: 1.3; }
 .lp-feature p { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 0; }
 
 /* ---------- 三张大分类卡 ---------- */

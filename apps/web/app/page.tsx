@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, ChevronDown, Sparkles, BookOpen, Layers3, Repeat2, Play, Mail } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Sparkles, BookOpen, Layers3, Repeat2, Mail } from "lucide-react";
 
 import HeroArt from "@/components/HeroArt";
 import ShelfCarousel from "@/components/ShelfCarousel";
@@ -13,26 +13,6 @@ import { effectiveVocabSize, getDemoUser, getKnownSet } from "@/lib/services/use
 export const dynamic = "force-dynamic";
 
 const LEVEL_LABEL: Record<string, string> = { cet4: "四级", cet6: "六级", toefl: "托福" };
-
-// 参考图里的 FAQ 折叠项，内容换成产品相关
-const FAQS = [
-  {
-    q: "什么是「先练后读」？",
-    a: "每一章在读原文之前，先把这一章里你不认识的词、短语和长难句挑出来练一遍，达标后再读正文；读完生词会自动回流到复习队列。这样读原著不再被生词打断。",
-  },
-  {
-    q: "词汇量是怎么测的？",
-    a: "六个词频段、每段四道「看词选义」题，扣掉蒙对的概率后估算你的词汇量，并据此把你分到四级或六级档。测评只需两三分钟。",
-  },
-  {
-    q: "书会按我的水平推荐吗？",
-    a: "会。书库按「你这一个人」的实测覆盖率显示预计生词数，过不了舒适区的书会单独放进挑战区，不会混进推荐里。",
-  },
-  {
-    q: "生词和复习怎么安排？",
-    a: "点词即可查义并自动标记为不认识；预习通关时把弱词入队，之后按遗忘曲线用四档评分安排复习。",
-  },
-];
 
 export default async function HomePage() {
   const user = await getDemoUser();
@@ -69,18 +49,9 @@ export default async function HomePage() {
           <div className="lp-hero-leaf lp-hero-leaf-b" />
         </div>
         <div className="lp-hero-inner">
-          <div className="lp-topline">
-            <span className="lp-pill">Read your way up</span>
-            <span className="lp-pill lp-pill-ghost">分级英文原著阅读</span>
-          </div>
           <h1 className="lp-wordmark">
             story<span>rung</span>
           </h1>
-          <p className="lp-hero-desc">
-            按词汇量分级推荐公版英文书，每章先练后读——
-            <br className="lp-desk-br" />
-            把生词、短语、长难句练透，再读原文。
-          </p>
           <div className="lp-hero-actions">
             <Link href={hasLevel ? "/library" : "/level-test"} className="lp-btn lp-btn-light">
               {hasLevel ? "进入书库" : "测词汇量"} <ArrowRight size={16} />
@@ -101,34 +72,25 @@ export default async function HomePage() {
             <div className="lp-hero-card lp-hero-card-light">
               <span className="lp-hero-card-label">可读书目</span>
               <strong>{bookCount} 本</strong>
-              <span className="lp-hero-card-sub">先练后读 · 分级适配</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== 三个小的卖点卡（Restorative / Purification / Pet Friendly 的位置） ===== */}
+      {/* ===== 三个卖点卡：只留标题 ===== */}
       <section className="lp-strip">
-        <div className="lp-section-head lp-strip-head">
-          <span className="lp-eyebrow">FOR READERS</span>
-          <h2 className="lp-h2">Reading, made for <em>you</em>.</h2>
-          <p className="lp-sub">不是硬啃原著，而是让每一本都刚好读得动。</p>
-        </div>
         <div className="lp-feature-row">
           <article className="lp-feature">
             <span className="lp-feature-ico"><Sparkles size={18} /></span>
             <h3>先练后读</h3>
-            <p>生词、短语、长难句先过关，再进正文。</p>
           </article>
           <article className="lp-feature">
             <span className="lp-feature-ico"><Layers3 size={18} /></span>
             <h3>按词汇量分级</h3>
-            <p>四六级自选，覆盖率算给你看。</p>
           </article>
           <article className="lp-feature">
             <span className="lp-feature-ico"><Repeat2 size={18} /></span>
             <h3>读完就复习</h3>
-            <p>弱词自动入队，按遗忘曲线排期。</p>
           </article>
         </div>
       </section>
@@ -141,9 +103,7 @@ export default async function HomePage() {
             <img src={coverUrl("the-wonderful-wizard-of-oz")!} alt="" />
           )}
           <div className="lp-cat-body">
-            <span className="lp-cat-kicker">01 · 入门</span>
             <h3>四级书库</h3>
-            <p>覆盖率 ≥94%，适合 4500 词左右，读得顺。</p>
             <span className="lp-cat-link">去看看 <ArrowUpRight size={14} /></span>
           </div>
         </Link>
@@ -151,9 +111,7 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {coverUrl("daisy-miller") && <img src={coverUrl("daisy-miller")!} alt="" />}
           <div className="lp-cat-body">
-            <span className="lp-cat-kicker">02 · 进阶</span>
             <h3>六级精选</h3>
-            <p>覆盖率 ≥96.5%，句子更地道，挑战更大。</p>
             <span className="lp-cat-link">去看看 <ArrowUpRight size={14} /></span>
           </div>
         </Link>
@@ -161,9 +119,7 @@ export default async function HomePage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {coverUrl("the-call-of-the-wild") && <img src={coverUrl("the-call-of-the-wild")!} alt="" />}
           <div className="lp-cat-body">
-            <span className="lp-cat-kicker">03 · 挑战</span>
             <h3>挑战区</h3>
-            <p>能读但会卡，先预习再上，稳步够到下一档。</p>
             <span className="lp-cat-link">去看看 <ArrowUpRight size={14} /></span>
           </div>
         </Link>
@@ -173,7 +129,6 @@ export default async function HomePage() {
       <section className="lp-new">
         <div className="lp-section-head lp-new-head">
           <div>
-            <span className="lp-eyebrow">JUST ADDED</span>
             <h2 className="lp-h2">最近上新</h2>
           </div>
           <Link href="/library" className="lp-viewall">查看全部 <ArrowUpRight size={14} /></Link>
@@ -202,9 +157,7 @@ export default async function HomePage() {
       {/* ===== 大标题 + 网格（Indoor Collection 的位置） ===== */}
       <section className="lp-collection">
         <div className="lp-collection-head">
-          <span className="lp-eyebrow">CURATED SHELF</span>
           <h2 className="lp-collection-title">Indoor <em>Collection</em></h2>
-          <p className="lp-sub lp-collection-sub">从童书到经典，按难度排好的室内阅读书架。</p>
         </div>
         <div className="lp-collage">
           {displayBooks.slice(3, 7).map((book) => {
@@ -255,39 +208,20 @@ export default async function HomePage() {
         <div><div className="stat-value">{finished}</div><div className="muted tiny">读完章节</div></div>
       </div>
 
-      {/* ===== 视频/大幅引导区（Quality Plants & Curated Goods 的位置） ===== */}
+      {/* ===== 大幅引导区（只保留画面） ===== */}
       <section className="lp-feature-banner">
-        <span className="lp-eyebrow">HOW IT WORKS</span>
-        <h2 className="lp-h2">Quality reading,<br /><em>curated for you.</em></h2>
-        <p className="lp-sub">测词汇量 → 选书 → 章前预习 → 读正文 → 复习巩固，五步把一本英文原著真正读下来。</p>
         <div className="lp-video">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {coverUrl("the-princess-and-the-goblin") && (
             <img src={coverUrl("the-princess-and-the-goblin")!} alt="" />
           )}
-          <span className="lp-play"><Play size={22} fill="currentColor" /></span>
         </div>
       </section>
 
-      {/* ===== FAQ 折叠 ===== */}
-      <section className="lp-faq">
-        <h2 className="lp-faq-title">Good to know</h2>
-        <div className="lp-faq-list">
-          {FAQS.map((item) => (
-            <details key={item.q} className="lp-faq-item">
-              <summary>{item.q}<ChevronDown size={18} /></summary>
-              <p>{item.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== 社区 footer ===== */}
+      {/* ===== 底部 CTA ===== */}
       <section className="lp-community">
         <div className="lp-community-inner">
           <span className="lp-community-mark"><BookOpen size={22} /></span>
-          <h2>Join the community!</h2>
-          <p>一起把英文原著读下来——你的进度、生词和复习，都在这里。</p>
           <div className="lp-community-actions">
             <Link href="/level-test" className="lp-btn lp-btn-light">测我的词汇量 <ArrowRight size={15} /></Link>
             <Link href="/library" className="lp-btn lp-btn-ghost">逛书库 <ArrowUpRight size={14} /></Link>
