@@ -962,10 +962,8 @@ body {
   transform: translate(-50%, -50%) translateX(calc(var(--offset) * var(--cf-gap)))
     translateZ(calc(var(--abs) * -80px)) rotateY(calc(var(--offset) * -26deg))
     scale(max(0.5, calc(1 - var(--abs) * 0.12)));
-  opacity: max(0.08, calc(1 - var(--abs) * 0.3));
-  filter: blur(calc(var(--abs) * 0.5px));
-  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.4s ease,
-    filter 0.4s ease;
+  opacity: max(0.14, calc(1 - var(--abs) * 0.3));
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.4s ease;
   will-change: transform, opacity;
 }
 
