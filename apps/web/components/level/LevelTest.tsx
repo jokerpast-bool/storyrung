@@ -154,9 +154,6 @@ export default function LevelTest({ items: initialItems }: { items: Item[] }) {
         <p className="muted small" style={{ marginTop: 0 }}>
           看词选义 · 先答 {Math.min(INITIAL_SIZE, items.length)} 题
         </p>
-        <p className="muted small" style={{ marginTop: 0 }}>
-          答完还可以继续加答，答得越多，估得越准。
-        </p>
         <div className="row" style={{ marginTop: "auto" }}>
           <button type="button" className="btn primary" onClick={() => setStage("quiz")}>
             开始测评 →

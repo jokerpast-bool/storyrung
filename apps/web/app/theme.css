@@ -844,3 +844,890 @@ body {
   max-width: 160px;
 }
 
+
+/* ---------- 首页：我的书架深色卡片 ---------- */
+.shelf-panel {
+  position: relative;
+  margin-top: 8px;
+  padding: 26px 30px 34px;
+  border-radius: 26px;
+  overflow: hidden;
+  color: #f6f1e6;
+  background:
+    radial-gradient(120% 120% at 8% -20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 55%),
+    radial-gradient(90% 80% at 100% 0%, rgba(214, 174, 108, 0.16), rgba(214, 174, 108, 0) 60%),
+    linear-gradient(158deg, #1d5b4b 0%, #143f35 48%, #0d2c26 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 30px 60px -30px rgba(13, 44, 38, 0.65);
+}
+
+.shelf-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/hero-texture.jpg") center / cover no-repeat;
+  opacity: 0.14;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.shelf-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 50% 120%, rgba(0, 0, 0, 0.32), transparent 62%);
+  pointer-events: none;
+}
+
+.shelf-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.shelf-panel .shelf-head {
+  border-top: 0;
+  padding-top: 0;
+  align-items: center;
+}
+
+.shelf-panel .shelf-label {
+  color: rgba(246, 241, 230, 0.78);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+
+.shelf-panel .shelf-label::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: #d8b27a;
+  vertical-align: middle;
+}
+
+.shelf-panel .shelf-more {
+  color: #f6f1e6;
+  font-size: 13px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.shelf-panel .shelf-more:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- 首页：书架轮播 ---------- */
+.shelf-carousel-wrap {
+  margin-top: 24px;
+}
+
+.shelf-carousel {
+  --cf-gap: clamp(100px, 14vw, 155px);
+  position: relative;
+  height: 306px;
+  perspective: 1400px;
+  overflow: hidden;
+  user-select: none;
+  outline: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+
+.shelf-carousel:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 6px;
+  border-radius: 16px;
+}
+
+.shelf-slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(180px, 20vw, 220px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  color: #fff;
+  cursor: pointer;
+  transform: translate(-50%, -50%) translateX(calc(var(--offset) * var(--cf-gap)))
+    translateZ(calc(var(--abs) * -80px)) rotateY(calc(var(--offset) * -26deg))
+    scale(max(0.5, calc(1 - var(--abs) * 0.12)));
+  opacity: max(0.14, calc(1 - var(--abs) * 0.3));
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.shelf-slide.is-active {
+  transform: translate(-50%, -50%) scale(1.08);
+  opacity: 1;
+}
+
+.shelf-slide .cover {
+  width: 120px;
+  height: 164px;
+  margin-bottom: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), inset -6px 0 10px rgba(0, 0, 0, 0.18);
+  transition: box-shadow 0.35s ease;
+}
+
+.shelf-slide.is-active .cover {
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.34), 0 0 0 3px rgba(255, 255, 255, 0.55),
+    inset -6px 0 10px rgba(0, 0, 0, 0.18);
+}
+
+.shelf-slide-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.35;
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shelf-slide-title,
+.shelf-slide-author,
+.shelf-slide-foot {
+  transition: opacity 0.3s ease;
+}
+
+.shelf-slide:not(.is-active) .shelf-slide-title,
+.shelf-slide:not(.is-active) .shelf-slide-author,
+.shelf-slide:not(.is-active) .shelf-slide-foot {
+  opacity: 0;
+}
+
+.shelf-slide-author {
+  max-width: 100%;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shelf-slide-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.shelf-slide-tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(224, 164, 88, 0.9);
+  color: #2a1c08;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.shelf-carousel-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .shelf-carousel-hint {
+    gap: 8px;
+    font-size: 11px;
+  }
+  .shelf-hint-keys {
+    display: none;
+  }
+}
+
+.shelf-carousel-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.shelf-carousel-nav:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 720px) {
+  .shelf-panel {
+    padding: 18px 18px 24px;
+    border-radius: 20px;
+  }
+  .shelf-carousel {
+    --cf-gap: clamp(90px, 30vw, 150px);
+    height: 300px;
+  }
+  .shelf-slide {
+    width: clamp(160px, 42vw, 190px);
+  }
+  .shelf-slide .cover {
+    width: 100px;
+    height: 136px;
+  }
+  .shelf-slide-title {
+    font-size: 15px;
+  }
+  .shelf-carousel-hint {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* ============================================================
+   落地页（参考图布局）：深色植物 → 卡片式长页
+   全部用 .lp-* 命名空间，固定墨绿深色区块 + 主题浅色纸面。
+   ============================================================ */
+.lp {
+  --pine: #103d33;
+  --pine-2: #0c2f28;
+  --pine-ink: #f2f6f1;
+  --cream: #f4f0e8;
+  display: block;
+}
+
+/* 落地页用负 margin 抵消 shell 的左右 padding，让整块铺到容器边缘，
+   顶部 nav 仍保留 shell 原有内边距，视觉上对齐。 */
+.lp {
+  margin: 0 -24px;
+}
+
+/* shell 在窄屏把内边距收到 16px，负 margin 必须同步，否则左右各被切掉 8px */
+@media (max-width: 720px) {
+  .lp {
+    margin: 0 -16px;
+  }
+}
+
+.lp section,
+.lp > div {
+  padding-left: clamp(20px, 6vw, 72px);
+  padding-right: clamp(20px, 6vw, 72px);
+}
+
+.lp-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.lp-h2 {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.12;
+  font-weight: 700;
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.lp-h2 em,
+.lp-wordmark em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.lp-sub {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ---------- Hero ---------- */
+.lp-hero {
+  position: relative;
+  background: var(--pine);
+  color: var(--pine-ink);
+  padding-top: 40px;
+  padding-bottom: 44px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.lp-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* 树叶光影纹理（随仓库分发的 hero 背景），铺满整个 Hero，最底层 */
+  background-image: url("/hero-texture.jpg");
+  background-size: cover;
+  background-position: center 42%;
+  background-repeat: no-repeat;
+}
+
+/* 墨绿遮罩叠在纹理之上：左侧略浓保证文字可读，右侧渐淡让树叶光影透出 */
+.lp-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(10, 42, 34, 0.9) 0%, rgba(13, 52, 43, 0.72) 50%, rgba(9, 38, 32, 0.42) 100%);
+}
+
+.lp-hero-cover {
+  position: absolute;
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+  opacity: 0.9;
+  transform: rotate(-8deg);
+}
+.lp-hero-cover-0 { top: 8%; right: 22%; transform: rotate(-12deg); }
+.lp-hero-cover-1 { top: 30%; right: 8%; width: 150px; height: 200px; transform: rotate(9deg); }
+.lp-hero-cover-2 { bottom: 6%; right: 34%; transform: rotate(6deg); }
+.lp-hero-cover-3 { bottom: 14%; right: 3%; width: 100px; height: 136px; transform: rotate(-6deg); }
+
+.lp-hero-leaf {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50% 10% 50% 10%;
+  background: radial-gradient(circle at 30% 30%, rgba(82, 195, 163, 0.18), transparent 68%);
+  filter: blur(6px);
+}
+.lp-hero-leaf-a { top: -80px; right: 20%; transform: rotate(24deg); }
+.lp-hero-leaf-b { bottom: -120px; right: -40px; transform: rotate(-40deg); }
+
+/* 窄屏放不下悬浮书封，会和按钮/数字卡叠在一起，只保留纹理 */
+@media (max-width: 720px) {
+  .lp-hero-cover {
+    display: none;
+  }
+}
+
+.lp-hero-inner {
+  position: relative;
+  max-width: 720px;
+}
+
+.lp-topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.lp-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #eaf3ec;
+  color: var(--pine);
+}
+.lp-pill-ghost {
+  background: transparent;
+  color: rgba(242, 246, 241, 0.82);
+  border: 1px solid rgba(242, 246, 241, 0.35);
+}
+
+.lp-wordmark {
+  font-family: var(--serif);
+  font-size: clamp(64px, 12vw, 132px);
+  line-height: 0.92;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  margin: 0 0 18px;
+}
+.lp-wordmark span {
+  color: #79c7a8;
+}
+
+.lp-hero-desc {
+  font-size: clamp(15px, 2vw, 19px);
+  line-height: 1.55;
+  color: rgba(242, 246, 241, 0.86);
+  margin: 0 0 24px;
+  max-width: 560px;
+}
+
+.lp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.lp-btn:hover { transform: translateY(-2px); }
+.lp-btn-light {
+  background: #f4f0e8;
+  color: var(--pine);
+}
+.lp-btn-ghost {
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+}
+.lp-hero .lp-btn-ghost { border-color: rgba(242, 246, 241, 0.5); color: var(--pine-ink); }
+
+.lp-hero-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 14px;
+}
+.lp-hero-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  border-radius: 16px;
+  min-height: 96px;
+}
+.lp-hero-card-dark { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14); color: var(--pine-ink); }
+.lp-hero-card-light { background: #eaf3ec; color: var(--pine); }
+.lp-hero-card-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+.lp-hero-card strong { font-family: var(--serif); font-size: 30px; line-height: 1.1; margin: 4px 0 2px; }
+.lp-hero-card-sub { font-size: 12px; opacity: 0.75; }
+
+/* ---------- 卖点三连 ---------- */
+.lp-strip {
+  padding-top: 58px;
+  padding-bottom: 20px;
+  background: var(--bg);
+}
+.lp-strip-head { margin-bottom: 26px; }
+.lp-feature-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.lp-feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.lp-feature-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.lp-feature h3 { font-family: var(--serif); font-size: 17px; margin: 0; line-height: 1.3; }
+.lp-feature p { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 0; }
+
+/* ---------- 三张大分类卡 ---------- */
+.lp-cats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+  background: var(--bg);
+}
+.lp-cat {
+  position: relative;
+  display: block;
+  min-height: 230px;
+  border-radius: 20px;
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+  isolation: isolate;
+  box-shadow: var(--shadow);
+}
+.lp-cat img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform 0.5s ease;
+}
+.lp-cat:hover img { transform: scale(1.06); }
+.lp-cat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(8, 30, 25, 0.18) 0%, rgba(8, 30, 25, 0.82) 100%);
+}
+.lp-cat-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+}
+.lp-cat-kicker { font-size: 11px; letter-spacing: 0.12em; opacity: 0.8; text-transform: uppercase; }
+.lp-cat h3 { font-family: var(--serif); font-size: 26px; margin: 4px 0 6px; }
+.lp-cat p { font-size: 12.5px; line-height: 1.5; opacity: 0.9; margin: 0 0 12px; }
+.lp-cat-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; }
+
+/* ---------- 圆形封面卡（New Plants） ---------- */
+.lp-new {
+  padding-top: 56px;
+  padding-bottom: 20px;
+  background: var(--bg);
+}
+.lp-new-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.lp-viewall {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lp-round-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.lp-round-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 22px 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+.lp-round-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+.lp-round-img {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 6px var(--surface), 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+.lp-round-img .cover {
+  width: 128px !important;
+  height: 128px !important;
+  border-radius: 50%;
+  box-shadow: none;
+}
+.lp-round-img .cover-art { object-fit: cover; }
+.lp-round-img .cover-emoji,
+.lp-round-img .cover-mark { display: none; }
+.lp-round-card h3 {
+  font-family: var(--serif);
+  font-size: 17px;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+.lp-round-author { color: var(--muted); font-size: 12px; margin: 0 0 6px; }
+.lp-round-meta { font-size: 11px; color: var(--accent); margin: 0; font-weight: 600; }
+.lp-round-go {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.lp-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.lp-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.lp-dots span.on { background: var(--accent); width: 22px; border-radius: 4px; }
+
+/* ---------- Indoor Collection 网格 ---------- */
+.lp-collection {
+  padding-top: 56px;
+  padding-bottom: 56px;
+  background: var(--bg);
+}
+.lp-collection-head { text-align: center; margin-bottom: 28px; }
+.lp-collection-title {
+  font-family: var(--serif);
+  font-size: clamp(38px, 6vw, 72px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 0 0 12px;
+}
+.lp-collection-title em { color: var(--accent); }
+.lp-collection-sub { margin: 0 auto; max-width: 520px; }
+.lp-collage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2.4vw, 30px);
+  margin-top: 18px;
+  padding-bottom: 12px;
+  position: relative;
+}
+.lp-book {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.35s ease;
+}
+.lp-book:hover { transform: translateY(-5px); }
+.lp-book-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e9e2d4;
+  box-shadow:
+    0 12px 24px -14px rgba(40, 30, 18, 0.55),
+    0 1px 2px rgba(40, 30, 18, 0.18);
+}
+.lp-book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16), transparent);
+}
+.lp-book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.lp-book:hover .lp-book-cover img { transform: scale(1.04); }
+.lp-book-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: var(--serif);
+  font-size: 48px;
+  color: rgba(40, 30, 18, 0.35);
+}
+.lp-book-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.35;
+  min-height: 2.7em;
+  color: var(--ink);
+}
+.lp-book-author {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: -6px;
+}
+
+/* 我的书架在落地页里保持间距 */
+.lp-my-shelf { margin-top: 8px; margin-bottom: 8px; }
+
+/* ---------- 视频/引导横幅 ---------- */
+.lp-feature-banner {
+  text-align: center;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.lp-feature-banner .lp-sub { margin: 0 auto 26px; max-width: 540px; }
+.lp-video {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: var(--pine);
+}
+.lp-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.lp-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--pine);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+}
+
+/* ---------- FAQ ---------- */
+.lp-faq {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  background: var(--bg);
+}
+.lp-faq-title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4vw, 46px);
+  margin: 0 0 26px;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+.lp-faq-list { display: flex; flex-direction: column; gap: 10px; }
+.lp-faq-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.lp-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 17px 20px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  list-style: none;
+}
+.lp-faq-item summary::-webkit-details-marker { display: none; }
+.lp-faq-item summary svg { transition: transform 0.2s ease; flex-shrink: 0; color: var(--muted); }
+.lp-faq-item[open] summary svg { transform: rotate(180deg); }
+.lp-faq-item p {
+  margin: 0;
+  padding: 0 20px 18px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* ---------- 社区区 ---------- */
+.lp-community {
+  background: var(--pine);
+  color: var(--pine-ink);
+  padding-top: 60px;
+  padding-bottom: 54px;
+}
+.lp-community-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+.lp-community-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  margin-bottom: 18px;
+}
+.lp-community h2 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 52px);
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+}
+.lp-community p { color: rgba(242, 246, 241, 0.8); font-size: 14px; margin: 0 0 24px; }
+.lp-community-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+.lp-community .lp-btn-ghost { border-color: rgba(242, 246, 241, 0.5); color: var(--pine-ink); }
+.lp-community-social {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.lp-community-social a { color: rgba(242, 246, 241, 0.82); text-decoration: none; font-size: 13px; }
+.lp-community-social a:hover { color: #fff; }
+
+.lp-newsletter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  background: var(--pine-2);
+  color: rgba(242, 246, 241, 0.7);
+  font-size: 12px;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 860px) {
+  .lp-feature-row,
+  .lp-cats { grid-template-columns: 1fr; }
+  .lp-cat { min-height: 200px; }
+  .lp-round-grid { grid-template-columns: repeat(2, 1fr); }
+  .lp-collage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .lp-hero-cover { opacity: 0.5; }
+  .lp-hero-card { min-height: 84px; }
+  .lp-hero-card strong { font-size: 24px; }
+  .lp-hero-cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lp-round-grid { grid-template-columns: 1fr; }
+  .lp-round-img { width: 150px; height: 150px; }
+  .lp-collage { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .lp-new-head { align-items: flex-start; flex-direction: column; }
+  .lp-desk-br { display: none; }
+}

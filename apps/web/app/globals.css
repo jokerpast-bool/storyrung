@@ -455,6 +455,29 @@ h3 {
   color: var(--muted);
 }
 
+.quiz-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.quiz-feedback::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.quiz-feedback.ok {
+  color: #14584a;
+}
+
+.quiz-feedback.bad {
+  color: var(--danger);
+}
+
 /* 预习页：左训练区 + 右侧信息栏，窄屏自动堆叠 */
 .prep-layout {
   display: grid;

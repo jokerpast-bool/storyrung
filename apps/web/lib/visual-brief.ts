@@ -54,8 +54,12 @@ async function deepSeekKey(): Promise<string | null> {
 
 export function displayAuthor(author: string): string {
   const cleaned = author.replace(/[“”"]/g, "").replace(/\s+/g, " ").trim();
-  const swapped = cleaned.match(/^([^,]+),\s*(.+)$/);
-  return swapped ? `${swapped[2]} ${swapped[1]}`.trim() : cleaned;
+  const [first, ...rest] = cleaned.split(/,\s*/);
+  // "Aesop, 621? BCE-565? BCE" 这类：第二段是生卒年，不是姓名的倒装
+  if (rest.length === 0 || rest.some((part) => /BCE|BC|\bCE\b|\d{3,4}/i.test(part))) {
+    return cleaned.replace(/,\s*\d.*$/, "").trim();
+  }
+  return `${rest.join(", ")} ${first}`.replace(/\s+/g, " ").trim();
 }
 
 /** 返回一句画面描述；失败时返回 null，让调用方退回标题兜底。 */
