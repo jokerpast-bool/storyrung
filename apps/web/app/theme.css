@@ -1220,6 +1220,13 @@ body {
 .lp-hero-leaf-a { top: -80px; right: 20%; transform: rotate(24deg); }
 .lp-hero-leaf-b { bottom: -120px; right: -40px; transform: rotate(-40deg); }
 
+/* 窄屏放不下悬浮书封，会和按钮/数字卡叠在一起，只保留纹理 */
+@media (max-width: 720px) {
+  .lp-hero-cover {
+    display: none;
+  }
+}
+
 .lp-hero-inner {
   position: relative;
   max-width: 720px;
