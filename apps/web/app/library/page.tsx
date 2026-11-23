@@ -82,12 +82,10 @@ export default async function LibraryPage({
   const known = await getKnownSet(user.id, vocabSize);
   const gate = getGate();
   const thresholds = activeThresholds(gate, user.level);
-  const [readable, challenges, rejected] = await Promise.all([
+  const [readable, challenges] = await Promise.all([
     listLibrary(user.id, known, { admission: "pass", level: levelFilter }),
     listLibrary(user.id, known, { admission: "challenge", level: levelFilter }),
-    listLibrary(user.id, known, { admission: "fail", level: levelFilter }),
   ]);
-  const failList = [...rejected].sort((a, b) => b.gateCoverage - a.gateCoverage);
 
   return (
     <main>
@@ -157,38 +155,6 @@ export default async function LibraryPage({
           </div>
         </section>
       )}
-
-      <section className="section">
-        <div className="section-head">
-          <h2 style={{ fontSize: 20 }}>需改写</h2>
-          <span className="badge danger">{rejected.length}</span>
-        </div>
-        <div className="card" style={{ padding: 0, overflowX: "auto", maxHeight: 560, overflowY: "auto" }}>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>书名</th>
-                <th style={{ width: 80 }}>覆盖率</th>
-                <th style={{ width: 80 }}>句均生词</th>
-              </tr>
-            </thead>
-            <tbody>
-              {failList.map((book) => (
-                <tr key={book.id}>
-                  <td>
-                    <Link href={`/book/${book.slug}`}>
-                      <b>{book.title}</b>
-                    </Link>
-                    <div className="muted tiny">{book.author}</div>
-                  </td>
-                  <td>{pct(book.gateCoverage)}</td>
-                  <td>{book.gateUnknownPerSentence.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
     </main>
   );
 }
