@@ -15,6 +15,7 @@
 import { mkdir, readFile, readdir, writeFile, stat } from "node:fs/promises";
 import { createReadStream } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { parse as parseCsv } from "csv-parse";
 import { writeLevelItems } from "./level-items.mjs";
 
@@ -273,51 +274,312 @@ function stripGutenberg(raw) {
   return text.replace(/\r\n/g, "\n");
 }
 
-function splitChapters(text) {
-  const chapterRe =
-    /^[ \t]*(?:CHAPTER|Chapter|PART|Part|BOOK|Book|ADVENTURE|Adventure)\s+([IVXLCDM]+|\d+)\b[.:]?[ \t]*(.*)$/gm;
+/**
+ * 有些书（Burgess 那批）的章节是「裸罗马数字 + 全大写标题」，没有 CHAPTER 字样，
+ * 目录里还有 "I. BUSTER BEAR GOES FISHING 1" 这种条目。这里补齐两种识别，
+ * 并在有 CONTENTS 的书里把目录/版权页/插图说明整段切掉，免得混进第一章正文。
+ */
+const ROMAN_VALUE = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+
+function romanValue(text) {
+  let total = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    const value = ROMAN_VALUE[text[i]] ?? 0;
+    const next = ROMAN_VALUE[text[i + 1]] ?? 0;
+    total += value < next ? -value : value;
+  }
+  return total;
+}
+
+function findChapterMarks(text) {
   const marks = [];
+  const explicitRe =
+    /^[ \t]*(?:CHAPTER|Chapter|PART|Part|BOOK|Book|ADVENTURE|Adventure)\s+([IVXLCDM]+|\d+)\b[.:]?[ \t]*(.*)$/gm;
   let match;
-  while ((match = chapterRe.exec(text)) !== null) {
-    marks.push({ index: match.index, numeral: match[1], title: (match[2] ?? "").trim(), length: match[0].length });
+  while ((match = explicitRe.exec(text)) !== null) {
+    let title = (match[2] ?? "").trim();
+    let bodyStart = match.index + match[0].length;
+    // 标题常单独占一行（"CHAPTER I" 下一行才是 "The Cyclone"），把它从正文里挪出来
+    if (!title) {
+      let cursor = bodyStart;
+      for (const line of text.slice(bodyStart, bodyStart + 240).split("\n")) {
+        cursor += line.length + 1;
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        // [Illustration]、_斜体_、纯标点这类不是标题，留空交给 cleanTitle 兜底
+        if (/^\[|^[_*]|^(Illustration|Frontispiece)\b|^[^A-Za-z]+$/.test(trimmed)) break;
+        if (trimmed.length <= 120) {
+          title = trimmed;
+          bodyStart = cursor;
+        }
+        break;
+      }
+    }
+    marks.push({
+      index: match.index,
+      numeral: match[1],
+      title,
+      bodyStart,
+      explicit: true,
+    });
   }
 
-  const chapters = marks.map((mark, i) => {
-    const from = mark.index + mark.length;
-    const to = i + 1 < marks.length ? marks[i + 1].index : text.length;
-    let title = mark.title;
-    if (!title) {
-      const after = text
-        .slice(from, Math.min(from + 200, to))
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean);
-      title = after[0] ?? `Chapter ${mark.numeral}`;
+  // 裸罗马数字行：要求紧跟着一行全大写标题，且编号递增，避免正文里的单个 "I" 被误判
+  const bareRe = /^[ \t]*([IVXLCDM]{1,7})[ \t]*$/gm;
+  let lastValue = 0;
+  while ((match = bareRe.exec(text)) !== null) {
+    const value = romanValue(match[1]);
+    if (value <= lastValue) continue;
+    const rest = text.slice(match.index + match[0].length);
+    const lines = rest.split("\n");
+    let cursor = match.index + match[0].length;
+    let title = "";
+    let seen = 0;
+    for (const line of lines) {
+      const trimmed = line.trim();
+      cursor += line.length + 1;
+      if (!trimmed) continue;
+      seen += 1;
+      if (seen > 3) break;
+      const isTitle =
+        trimmed.length >= 3 &&
+        trimmed.length <= 88 &&
+        /^[A-Z0-9][A-Z0-9 ,.'’\-—&!?]*$/.test(trimmed) &&
+        /[A-Z]{2}/.test(trimmed);
+      if (isTitle) {
+        title = trimmed;
+        lastValue = value;
+      }
+      break;
     }
+    if (!title) continue;
+    marks.push({ index: match.index, numeral: match[1], title, bodyStart: cursor, explicit: false });
+  }
+
+  // 第三种：同一行 "I. Granny Fox Gives a Warning"（Reddy Fox 这类），排除目录里带页码的条目
+  const inlineRe = /^[ \t]*([IVXLCDM]{1,7})\.[ \t]+([A-Z][^\n]{2,80})$/gm;
+  let inlineValue = 0;
+  while ((match = inlineRe.exec(text)) !== null) {
+    const title = match[2].trim();
+    if (!title || /\d+\s*$/.test(title)) continue;
+    const value = romanValue(match[1]);
+    if (value <= inlineValue) continue;
+    inlineValue = value;
+    marks.push({
+      index: match.index,
+      numeral: match[1],
+      title,
+      bodyStart: match.index + match[0].length,
+      explicit: false,
+      inline: true,
+    });
+  }
+
+  marks.sort((a, b) => a.index - b.index);
+  const unique = [];
+  for (const mark of marks) {
+    const prev = unique[unique.length - 1];
+    if (prev && mark.index - prev.index < 5) continue;
+    if (prev && prev.explicit && !mark.explicit && romanValue(mark.numeral) <= romanValue(prev.numeral)) continue;
+    unique.push(mark);
+  }
+  return unique;
+}
+
+function cutFrontMatter(text, marks) {
+  const contents = text.search(/^[ \t]*(?:CONTENTS|Contents|LIST OF ILLUSTRATIONS)[ \t]*$/m);
+  if (contents >= 0) {
+    const first = marks.find((mark) => mark.index > contents);
+    if (first) return { text: text.slice(first.index), from: first.index };
+  }
+  // 没有 CONTENTS 的书：如果第一个章节标记之前是版权页/转录声明/书名页，也一并切掉
+  const first = marks[0];
+  if (first && first.index > 0) {
+    const head = text.slice(0, first.index);
+    const looksLikeFrontMatter =
+      head.length < 20000 &&
+      /(Produced by|Transcriber|Copyright|PREPARER|LIST OF ILLUSTRATIONS|BY THE SAME AUTHOR)/i.test(head);
+    if (looksLikeFrontMatter) return { text: text.slice(first.index), from: first.index };
+  }
+  return { text, from: 0 };
+}
+
+function normalizeTitle(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, " ")
+    .trim();
+}
+
+function cleanTitle(title, numeral, index) {
+  let t = (title ?? "").trim();
+  t = t.replace(/^[\s\]\[)(.,;:!?"'’”\-—]+/, "").replace(/[\s\]\[)(.,;:!?"'’”\-—]+$/, "").trim();
+  if (!t || /^illustrations?$/i.test(t) || /^chapter$/i.test(t)) t = "";
+  if (!t) {
+    const num = String(numeral ?? "").trim();
+    // 原文只有 "CHAPTER II." 这种标记时，用罗马数字做标题比 "Chapter 13" 更接近原书
+    t = /^[IVXLCDM]+$/.test(num) ? `Chapter ${num}` : `Chapter ${/^\d+$/.test(num) ? num : index}`;
+  }
+  return t;
+}
+
+function stripLeadingTitle(body, title) {
+  let paras = body.split(/\n{2,}/);
+  const normTitle = normalizeTitle(title);
+  if (!normTitle) return body;
+  // 改写稿里标题可能出现两次（"CHAPTER 1. 标题" 后面又跟着一行原标题），循环剥掉
+  for (let guard = 0; guard < 3; guard += 1) {
+    while (paras.length > 0 && !(paras[0] ?? "").trim()) paras = paras.slice(1);
+    const first = (paras[0] ?? "").replace(/\s+/g, " ").trim();
+    if (!first) break;
+    const firstNorm = normalizeTitle(first);
+    if (firstNorm === normTitle) {
+      paras = paras.slice(1);
+      continue;
+    }
+    if (firstNorm.startsWith(`${normTitle} `)) {
+      const titleWords = title.trim().split(/\s+/).length;
+      paras[0] = first.split(/\s+/).slice(titleWords).join(" ");
+      continue;
+    }
+    break;
+  }
+  return paras.join("\n\n");
+}
+
+function looksLikeFrontMatter(paragraph) {
+  const p = paragraph.trim();
+  if (!p) return true;
+  if (/^(CONTENTS|TABLE OF CONTENTS|LIST OF ILLUSTRATIONS|ILLUSTRATIONS|PREPARER|PREFACE|INTRODUCTION|BIBLIOGRAPHICAL NOTE|NOTE)/i.test(p)) return true;
+  if (/^(Produced by|Copyright|Transcriber|\[Illustration|\[Frontispiece|Project Gutenberg)/i.test(p)) return true;
+  if (p.length < 100 && !/[a-z]/.test(p)) return true;
+  if (/^[_\s*\-—=]{3,}$/.test(p)) return true;
+  return false;
+}
+
+function trimFrontMatterDeep(text) {
+  const lines = text.split("\n");
+  const junk = /(^\[|\[Illustration|Copyright|Frontispiece|CHAPTER PAGE|LIST OF ILLUSTRATIONS|CONTENTS|PREPARER|Project Gutenberg|Transcriber|Produced by|ILLUSTRATIONS|This eBook is for the use|Project Gutenberg License|www\.gutenberg|^(Title|Author|Release date|Language|Credits|Most recently updated|Character set encoding|Produced by)\s*:)/i;
+  let i = 0;
+  let skipBlock = false;
+  const limit = Math.min(lines.length, 1200);
+  while (i < limit) {
+    const line = lines[i].replace(/\s+/g, " ").trim();
+    if (!line) { skipBlock = false; i += 1; continue; }
+    if (skipBlock) { i += 1; continue; }
+    const short = line.length < 120;
+    const allCaps = short && !/[a-z]/.test(line);
+    const tocLine = /^[A-Z0-9][A-Za-z0-9 ,.'’\-—&!?]{3,90}\s+\d{1,4}$/.test(line);
+    const pageNo = /^\d{1,4}$/.test(line);
+    const byline = /^(By|Translated|Edited|Prepared|Illustrated)\b/i.test(line);
+    const prose = line.length >= 60 && (line.match(/[a-z]/g) ?? []).length > line.length * 0.5;
+    if (junk.test(line) || allCaps || tocLine || pageNo || byline) {
+      skipBlock = junk.test(line);
+      i += 1;
+      continue;
+    }
+    if (prose) break;
+    i += 1;
+  }
+  const out = lines.slice(i).join("\n").trim();
+  return out.length > 0 ? out : text.trim();
+}
+
+// 有些书第一章没有章节标记，正文最前面还挂着书名页/版权/目录，往下跳到第一段真正的叙事
+function trimFirstChapterHead(body) {
+  const paras = body.split(/\n{2,}/);
+  let i = 0;
+  let dropped = 0;
+  while (i < paras.length && dropped < 12) {
+    const p = paras[i].replace(/\s+/g, " ").trim();
+    // 目录/版权/插图清单常常是一整段长文本，不能只看首行
+    const junk = /(Copyright|Frontispiece|CHAPTER PAGE|LIST OF ILLUSTRATIONS|CONTENTS|PREPARER|Project Gutenberg|Transcriber|Produced by)/i;
+    if (looksLikeFrontMatter(paras[i]) || (junk.test(p) && p.length < 3000)) {
+      i += 1;
+      dropped += 1;
+      continue;
+    }
+    break;
+  }
+  return paras.slice(i).join("\n\n");
+}
+
+function splitChapters(text) {
+  const endMarker = text.search(/^[ \t]*(?:\*\*\*[ \t]*)?END OF (?:THE|THIS) PROJECT GUTENBERG/im);
+  const body = endMarker > text.length * 0.4 ? text.slice(0, endMarker) : text;
+  const marks = findChapterMarks(body);
+  const front = cutFrontMatter(body, marks);
+  const startAt = front.from;
+  const real = marks.filter((mark) => mark.index >= startAt);
+  if (real.length === 0) return [{ index: 1, title: "Chapter 1", body: trimFrontMatterDeep(trimFirstChapterHead(front.text)).trim() }];
+
+  const chapters = real.map((mark, i) => {
+    const to = i + 1 < real.length ? real[i + 1].index : body.length;
+    const raw = body.slice(mark.bodyStart, to);
+    const title = cleanTitle(mark.title, mark.numeral, i + 1);
     return {
       key: mark.numeral,
-      title: title.replace(/\s+/g, " ").slice(0, 120),
-      body: text.slice(from, to),
+      title,
+      body: stripLeadingTitle(raw, title),
     };
   });
 
-  // 目录页会重复出现章节标题：同一编号只保留正文最长的那一段（目录条目正文极短）
+  // 目录条目也可能命中：同编号保留正文最长的一段
   const best = new Map();
   for (const chapter of chapters) {
     const prev = best.get(chapter.key);
     if (!prev || chapter.body.length > prev.body.length) best.set(chapter.key, chapter);
   }
 
-  const filtered = [...best.values()].filter((c) => c.body.trim().length >= 500);
-  if (filtered.length === 0) return [{ index: 1, title: "Chapter 1", body: text.trim() }];
-  return filtered.map((c, i) => ({ index: i + 1, title: c.title, body: c.body }));
+  const filtered = [...best.values()].filter((chapter) => chapter.body.trim().length >= 500);
+  if (filtered.length === 0) return [{ index: 1, title: "Chapter 1", body: front.text.trim() }];
+
+  // 重名章节加上序号，避免目录里出现一堆同名条目
+  const seen = new Set();
+  const out = filtered.map((chapter, i) => {
+    const base = chapter.title.replace(/\s*（\d+）$/, "");
+    let title = base;
+    let n = 2;
+    while (seen.has(title)) {
+      title = `${base}（${n}）`;
+      n += 1;
+    }
+    seen.add(title);
+    const body = i === 0 ? trimFirstChapterHead(chapter.body) : chapter.body;
+    return { index: i + 1, title, body };
+  });
+
+  // 最后一章常挂着 "THE END"、印刷厂署名等尾巴
+  if (out.length > 0) {
+    const last = out[out.length - 1];
+    const cut = last.body.search(/THE\s+END\b|CHISWICK PRESS|PRINTED BY|Printed by/i);
+    if (cut > last.body.length * 0.6) last.body = last.body.slice(0, cut).trim();
+  }
+  return out;
 }
 
 function paragraphs(body) {
   return body
     .split(/\n{2,}/)
     .map((p) => p.replace(/\n/g, " ").replace(/\s+/g, " ").trim())
-    .filter((p) => p.length > 0 && !/^\[Illustration\]/.test(p));
+    .filter(
+      (p) =>
+        p.length > 0 &&
+        // 短段落里只要出现版权/插图/目录标记，一律当垃圾段落丢掉（长段落可能是正文叙述）
+        !(p.length < 160 && /(Copyright|Frontispiece|Illustration:|CHAPTER PAGE|LIST OF ILLUSTRATIONS|\bProject Gutenberg\b|Transcriber|Produced by)/i.test(p)) &&
+        // 目录/插图清单合并成一行的情况：多组 "I 标题 页码"，或含 CHAPTER PAGE / _Frontispiece_
+        !/CHAPTER\s+PAGE/i.test(p) &&
+        !/_Frontispiece_/i.test(p) &&
+        !/(\b[IVXLC]{1,6}\.?\s+[A-Z][^.]{2,60}?\s+\d{1,3}\s+){3,}/.test(p) &&
+        !/^\[(Illustration|Frontispiece|Decoration|Plate)/i.test(p) &&
+        !/^_[^_]{1,80}_\.?$/.test(p) &&
+        !/^(CONTENTS|PAGE|CHAPTER PAGE|THE END)$/i.test(p) &&
+        !/^(Produced by|Transcriber|E-?text prepared|Updated editions|HTML version)/i.test(p) &&
+        !/^(End of (the )?Project Gutenberg|Project Gutenberg License|\*\*\* ?END)/i.test(p) &&
+        !/^[\s*\-—=_·.]{3,}$/.test(p) &&
+        // 目录行：全大写标题 + 页码，正文里不会出现
+        !/^[A-Z0-9][A-Z0-9 ,.'’\-—&!?]{4,80}\s+\d{1,4}$/.test(p),
+    );
 }
 
 /**
@@ -359,6 +621,21 @@ function expandLongChapters(chapters, maxWords = 6000, targetWords = 3500) {
   return out;
 }
 
+function ensureUniqueTitles(list) {
+  const seen = new Set();
+  return list.map((chapter) => {
+    const base = chapter.title.replace(/\s*（\d+）$/, "");
+    let title = base;
+    let n = 2;
+    while (seen.has(title)) {
+      title = `${base}（${n}）`;
+      n += 1;
+    }
+    seen.add(title);
+    return { ...chapter, title };
+  });
+}
+
 async function main() {
   const BOOKS = await loadBooks();
   console.log(`· 书单 ${BOOKS.length} 本（content-pipeline/books.json）`);
@@ -393,9 +670,9 @@ async function main() {
         console.log(`  ${book.slug}: 改写不完整（${adaptedChapters}/${originalChapters} 章），本次仍用原文`);
       }
     }
-    const chapters = expandLongChapters(splitChapters(text)).map((chapter) => {
+    const chapters = ensureUniqueTitles(expandLongChapters(splitChapters(text))).map((chapter) => {
       const sentences = [];
-      for (const para of paragraphs(chapter.body)) {
+      for (const para of paragraphs(stripLeadingTitle(chapter.body, chapter.title))) {
         for (const sentence of toSentences(para)) {
           const tokens = tokenize(sentence.text).map((token, i) => {
             neededWords.add(token.surface.toLowerCase());
@@ -789,7 +1066,11 @@ function evaluateGate(counts, rankOf, vocabSize, sentenceCount, threshold) {
   return { pass: reasons.length === 0, coverage, unknownPerSentence: perSentence, reasons };
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+export { splitChapters, stripGutenberg };
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
